@@ -1,9 +1,9 @@
 
 /**
- * An immutable class representing a playing card from a standard deck.
- * Each card has a value and a suit.
+ * Fill in later
  * 
- * @author Fawzi Emad (c) 2008
+ * 
+ * @author Brian Lee & Dennis Deng (c) 2015
  */
 public class Card {
 
