@@ -9,6 +9,8 @@ public class PlayGame {
 		PokerGame game = new PokerGame(2);
 		
 		System.out.println(game.players[0]);
+		System.out.println(game.players[1]);
+
 
 		//System.out.println(game.players[0]);
 		//System.out.println(game.players[1]);

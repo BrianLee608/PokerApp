@@ -4,7 +4,7 @@ package poker;
 
 public class Player {
 
-	
+	private final String name;
 	private int money;
 	private Card [] wholeCards;
 	private int position;
@@ -13,13 +13,13 @@ public class Player {
 	//add more variables
 	
 	
-	public Player(int startingMoney, int positionIn) {
+	public Player(String name, int money, int position) {
 		
-		money = startingMoney;
+		this.name = name;
+		this.money = money;
+		this.position = position;
+		DEALER = (position == 0) ? true : false;
 		wholeCards = new Card[2];
-		position = positionIn;
-		DEALER = (positionIn == 1) ? true : false;
-		
 		turnToAct = false; //modify this later
 
 	}
@@ -32,13 +32,10 @@ public class Player {
 	}
 	
 	
-	public void receiveCard(Card card) {
+	public void receiveHand(Card[] hand) {
 		
-		if (wholeCards[0] == null) {
-			wholeCards[0] = card;
-		} else {
-			wholeCards[1] = card;
-		}
+		wholeCards[0] = hand[0];
+		wholeCards[1] = hand[1];
 		
 	}
 	
@@ -79,7 +76,7 @@ public class Player {
 	public String toString() {
 		
 		String retVal = "";
-		retVal += "Money: " + money + ", Whole Cards: " + wholeCards[0] 
+		retVal += name + ", " + money + "$ , Whole Cards: " + wholeCards[0] 
 						+ " and " + wholeCards[1];
 		return retVal;
 		

@@ -1,28 +1,20 @@
 package poker;
 
-
 import java.util.Random;
-
-/* This class represents a deck of card objects in an array. 
- * 
- */
 
 public class Deck {
 
 	private Card[] cards;
 
-	
 	public Deck() {
-		
-		this.cards = new Card[52];
-		
-		int index = 0;
-		for (int suit = 0; suit < 4; suit++) {
-			for (int value = 1; value <=13; value++) {
-				this.cards[index++] = new Card(value, suit);
-			}
-		}
-	}
+		cards = new Card[52];
+        int i = 0;
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                cards[i++] = new Card(rank, suit);
+            }
+        }
+    }
 	
 	//Copy constructor. Instantiates an aliased new deck of cards. 
 	public Deck(Deck other) {
@@ -45,42 +37,10 @@ public class Deck {
 		return this.cards.length;
 	}
 
-	//Shuffles the deck in the following manner: 
-	//"the new array of cards will consist of:  the first card from the top 
-	//packet, followed by the first card from the bottom packet, followed by
-	//the second card from the top packet, followed by the second card from the
-	//bottom packet, etc."
-	//Algorithm: 
-	//Create a blank array of the same size as the current cards' length.
-	//if the deck is odd, we must set counter to 1 instead of 0 in order 
-	//to round up for subsequent operations on length/2. 
-	public void shuffle() {
-		/*
-		Card[] tempDeck = new Card[this.cards.length];
-		
-		int counter = 0;
-		
-		if (this.cards.length % 2 != 0) {
-			counter = 1;
-		}
 
-		for (int i = 0; i < tempDeck.length; i++) {
-			if (i % 2 == 0) {         //i is even
-				tempDeck[i] = this.cards[i/2];
-			} else {				  //i is odd
-				tempDeck[i] = this.cards[tempDeck.length/2 + counter++];
-			}
-		} 
-		
-		for (int i = 0; i < this.cards.length; i++) {
-			this.cards[i] = tempDeck[i];
-		}
-		*/
-		
-		
-		//This is me practicing the modern shuffling algorithm
-		//for Poker2015 app, this algorithm is better. 
-		
+	//Does the Fisher-Yates shuffling algorithm on this deck of cards
+	public void shuffle() {
+
 		Random rn = new Random();
 		
 		for (int i = cards.length-1; i > 0; i--) {
@@ -92,8 +52,6 @@ public class Deck {
 			cards[i] = temp; 
 			
 		}
-		
-		
 		
 	}
 
@@ -145,6 +103,8 @@ public class Deck {
 		
 	}
 	
+	
+	
 	//Just calls this class' deal method to get rid of one card. 
 	//The card that was burned can never be accessed.
 	public void burn() {
@@ -152,6 +112,8 @@ public class Deck {
 		this.deal(1);
 		
 	}
+	
+
 		
 	
 	
