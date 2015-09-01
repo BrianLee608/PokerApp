@@ -1,6 +1,6 @@
 
 /**
- * Fill in later
+ * Fill in later. This is an immutable class
  * 
  * 
  * @author Brian Lee & Dennis Deng (c) 2015

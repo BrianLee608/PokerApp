@@ -54,7 +54,7 @@ public class Deck {
 	//if the deck is odd, we must set counter to 1 instead of 0 in order 
 	//to round up for subsequent operations on length/2. 
 	public void shuffle() {
-		
+		/*
 		Card[] tempDeck = new Card[this.cards.length];
 		
 		int counter = 0;
@@ -74,10 +74,11 @@ public class Deck {
 		for (int i = 0; i < this.cards.length; i++) {
 			this.cards[i] = tempDeck[i];
 		}
+		*/
 		
 		
-		/*
 		//This is me practicing the modern shuffling algorithm
+		//for Poker2015 app, this algorithm is better. 
 		
 		Random rn = new Random();
 		
@@ -91,7 +92,7 @@ public class Deck {
 			
 		}
 		
-		*/
+		
 		
 	}
 
@@ -121,7 +122,8 @@ public class Deck {
 	
 	//Returns an array of cards containing the cards that were dealt.
 	//Also updates the current deck of cards to have an appropriate array of
-	//cards after dealing numCards.
+	//cards after dealing numCards. 
+	//Re-indexes this deck such that there are no null pointers in the beginning.
 	public Card[] deal(int numCards) {
 		
 		Card[] smaller = new Card[this.cards.length - numCards];
@@ -140,7 +142,13 @@ public class Deck {
 		this.cards = smaller;
 		return dealtCards;
 		
+	}
+	
+	//Just calls this class' deal method to get rid of one card. 
+	//The card that was burned can never be accessed.
+	public void burn() {
 		
+		this.deal(1);
 		
 	}
 		
