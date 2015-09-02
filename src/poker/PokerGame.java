@@ -11,24 +11,32 @@ public class PokerGame {
 	
 	//variables
 	public static int handNumber; 
-	public static int dealerIndex;
 	public static int actionIndex;
 	public static int pot;  //does it matter static or instance?
+	public static int totalPlayers;
+	public static int street;
 	
 	public Player [] players;
 	public Card [] board;
+	public Deck myDeck;
 	
 	//Instantiate this when a fresh new game starts
 	public PokerGame(int numOfPlayers) {
-		
+
+		totalPlayers = numOfPlayers;
 		pot = 0;
 		handNumber = 1;
-		
+		//Action starts on UTG
+		actionIndex = 3;
+		//Pre = 0, flop = 1, turn = 2, river = 3
+		street = 0;
+
 		//Create a new deck and shuffle it NUMBER_OF_SHUFFLES times
 		Deck deck = new Deck();
+		myDeck = deck;
 
 		for (int shuffleNum = 0; shuffleNum < NUMBER_OF_SHUFFLES; shuffleNum++){
-			deck.shuffle();
+			myDeck.shuffle();
 		}
 		
 		//the arraylist posAssign will contain numOfPlayer integers
@@ -52,22 +60,53 @@ public class PokerGame {
 			int pos = posAssign.get(i); 	
 			players[i] = new Player("Player " + i, STARTING_CASH, pos);
 			//deal 2 cards to each player
-			players[i].receiveHand(deck.deal(2));  
-			//if a player is assigned a 0 index, he is the dealer
-			if (pos == 0) {
-				dealerIndex = i;
-			}
-
+			players[i].receiveHand(myDeck.deal(2));
 		}
 
 		//initialize where current action is
 		if (numOfPlayers == 2) {
-			actionIndex = (dealerIndex == numOfPlayers-1) ? dealerIndex:0;
+			//Small blind is first to act headsup
+			actionIndex = 0;
 		} // need more code to deal with 3,4,5,6,7,8,9 players
 
 		//initialize a blank deck (all null)
 		board = new Card[5]; 
 		
 	}
-	
+
+	public void nextTurn(){
+		// Reset actionIndex
+		if (actionIndex == totalPlayers-1){
+			actionIndex = 0;
+		}
+		else{
+			actionIndex = actionIndex + 1;
+		}
+	}
+
+	public void fillBoard(){
+		switch(street){
+			//flop
+			case 1: board[0] = myDeck.deal(1)[0];
+					board[1] = myDeck.deal(1)[0];
+					board[2] = myDeck.deal(1)[0];
+				break;
+			//turn
+			case 2: board[3] = myDeck.deal(1)[0];
+				break;
+			//river
+			case 3: board[4] = myDeck.deal(1)[0];
+				break;
+		}
+	}
+
+	public void changeStreet(){
+		if(street==3){
+			street = 0;
+		}
+		else{
+			street = street + 1;
+		}
+	}
+
 }

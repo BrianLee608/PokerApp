@@ -2,6 +2,8 @@
 
 package poker;
 
+import java.util.Scanner;
+
 public class Player {
 
 	private final String name;
