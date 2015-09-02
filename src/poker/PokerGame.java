@@ -26,6 +26,7 @@ public class PokerGame {
 		
 		//Create a new deck and shuffle it NUMBER_OF_SHUFFLES times
 		Deck deck = new Deck();
+
 		for (int shuffleNum = 0; shuffleNum < NUMBER_OF_SHUFFLES; shuffleNum++){
 			deck.shuffle();
 		}
@@ -37,10 +38,11 @@ public class PokerGame {
 		//position 1 = small blind
 		//position 2 = big blind
 		//position 3,4,5,6,7,8 ....
-		ArrayList <Integer> posAssign = new ArrayList<Integer>(numOfPlayers); 
+		ArrayList <Integer> posAssign = new ArrayList <Integer> (numOfPlayers);
 		for (int i = 0; i < numOfPlayers; i++) {
 			posAssign.add(i);
 		}
+
 		java.util.Collections.shuffle(posAssign);
 
 		//Initialize the players
@@ -48,7 +50,7 @@ public class PokerGame {
 		for (int i = 0; i < numOfPlayers; i++) {
 			//assign random position to each player
 			int pos = posAssign.get(i); 	
-			players[i] = new Player("Player" + i,STARTING_CASH, pos);
+			players[i] = new Player("Player " + i, STARTING_CASH, pos);
 			//deal 2 cards to each player
 			players[i].receiveHand(deck.deal(2));  
 			//if a player is assigned a 0 index, he is the dealer
@@ -60,16 +62,12 @@ public class PokerGame {
 
 		//initialize where current action is
 		if (numOfPlayers == 2) {
-			actionIndex=(dealerIndex == numOfPlayers-1) ? dealerIndex:0;
+			actionIndex = (dealerIndex == numOfPlayers-1) ? dealerIndex:0;
 		} // need more code to deal with 3,4,5,6,7,8,9 players
 
 		//initialize a blank deck (all null)
 		board = new Card[5]; 
 		
 	}
-	
-	
-
-	
 	
 }

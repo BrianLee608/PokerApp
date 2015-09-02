@@ -7,8 +7,7 @@ package poker;
 public class Card {
 
 	private final Suit suit;    
-	private final Rank rank; 
-	                          
+	private final Rank rank;
 
 	public Card(Rank rank, Suit suit) {
 
@@ -17,19 +16,16 @@ public class Card {
 		
 	}
 
-
 	public Rank getRank() {
 		return rank;
 	}
-	
 
 	public Suit getSuit() {
 		return suit;
 	}
-	
 
 	public String toString() {
-		return rank + " of " + suit;
+		return rank.getValue() + suit.getValue();
 	}
 	
 	public boolean equals(Object o) {

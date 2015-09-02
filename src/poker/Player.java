@@ -6,12 +6,11 @@ public class Player {
 
 	private final String name;
 	private int money;
-	private Card [] wholeCards;
+	private Card [] holeCards;
 	private int position;
 	private boolean DEALER;
 	private boolean turnToAct; //should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
-	
 	
 	public Player(String name, int money, int position) {
 		
@@ -19,23 +18,21 @@ public class Player {
 		this.money = money;
 		this.position = position;
 		DEALER = (position == 0) ? true : false;
-		wholeCards = new Card[2];
+		holeCards = new Card[2];
 		turnToAct = false; //modify this later
 
 	}
-	
 	
 	public int getMoney() {
 		
 		return money;
 		
 	}
-	
-	
+
 	public void receiveHand(Card[] hand) {
 		
-		wholeCards[0] = hand[0];
-		wholeCards[1] = hand[1];
+		holeCards[0] = hand[0];
+		holeCards[1] = hand[1];
 		
 	}
 	
@@ -45,10 +42,9 @@ public class Player {
 			//throw an exception
 		}
 		
-		return wholeCards[pos];
+		return holeCards[pos];
 		
 	}
-	
 	
 	public void postBB() {
 		
@@ -68,20 +64,21 @@ public class Player {
 	
 	
 	public void raise(int amount) {
-		
-		money -= amount;
+		if (amount>money){
+			System.out.println("Incorrect Bet Size");
+		}
+		else{
+			money -= amount;
+		}
 		
 	}
 	
 	public String toString() {
 		
 		String retVal = "";
-		retVal += name + ", " + money + "$ , Whole Cards: " + wholeCards[0] 
-						+ " and " + wholeCards[1];
+		retVal += name + ": " + "$" + money + ", " + holeCards[0] + holeCards[1] + ", " + position;
 		return retVal;
 		
 	}
 
-	
-	
 }

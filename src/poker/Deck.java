@@ -37,7 +37,6 @@ public class Deck {
 		return this.cards.length;
 	}
 
-
 	//Does the Fisher-Yates shuffling algorithm on this deck of cards
 	public void shuffle() {
 
@@ -77,34 +76,27 @@ public class Deck {
 		}
 		
 	}
-
 	
 	//Returns an array of cards containing the cards that were dealt.
 	//Also updates the current deck of cards to have an appropriate array of
 	//cards after dealing numCards. 
 	//Re-indexes this deck such that there are no null pointers in the beginning.
 	public Card[] deal(int numCards) {
-		
-		Card[] smaller = new Card[this.cards.length - numCards];
-		
-		int smallerIndex = 0;
-		for (int i = numCards; i < this.cards.length; i++) {
-			smaller[smallerIndex++] = this.cards[i];
-		}
-		
+
+		int copylength = this.cards.length - numCards;
+
+		Card[] dealtDeck = new Card[copylength];
 		Card[] dealtCards = new Card[numCards];
-		
-		for (int i = 0; i < numCards; i++) {
-			dealtCards[i] = this.cards[i];
-		}
-		
-		this.cards = smaller;
+
+		//Arraycopy(source array, source start point, target array, target start point, length copied
+		System.arraycopy(this.cards, numCards, dealtDeck, 0, copylength);
+		System.arraycopy(this.cards, 0, dealtCards, 0, numCards);
+
+		this.cards = dealtDeck;
 		return dealtCards;
 		
 	}
-	
-	
-	
+
 	//Just calls this class' deal method to get rid of one card. 
 	//The card that was burned can never be accessed.
 	public void burn() {
@@ -112,9 +104,5 @@ public class Deck {
 		this.deal(1);
 		
 	}
-	
-
-		
-	
 	
 }
