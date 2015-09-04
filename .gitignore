@@ -2,3 +2,6 @@ PokerApp.iml
 .idea
 out/*
 bin/*
+.DS_Store
+src/.DS_Store
+src/poker/.DS_Store
