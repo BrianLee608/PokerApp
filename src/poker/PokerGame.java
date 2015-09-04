@@ -10,34 +10,30 @@ public class PokerGame {
 	private static final int NUMBER_OF_SHUFFLES = 3;
 	
 	//variables
-	public static int handNumber; 
-	public static int actionIndex;
-	public static int pot;  //does it matter static or instance?
+	public int handNumber; 
 	public static int totalPlayers;
-	public static int street;
-	
+	public int sbIndex;
+	public int bbIndex;
+	public int actionIndex;
 	public Player [] players;
 	public Card [] board;
-	public Deck myDeck;
+	public Deck deck;
+	
+	public ArrayList<Hand> hand = new ArrayList<Hand>();
 	
 	//Instantiate this when a fresh new game starts
 	public PokerGame(int numOfPlayers) {
 
 		totalPlayers = numOfPlayers;
-		pot = 0;
-		handNumber = 1;
+
+		handNumber = 0;
+		sbIndex = 0;
+		bbIndex = 1;
 		//Action starts on UTG
-		actionIndex = 3;
+		actionIndex = 2;
 		//Pre = 0, flop = 1, turn = 2, river = 3
-		street = 0;
 
-		//Create a new deck and shuffle it NUMBER_OF_SHUFFLES times
-		Deck deck = new Deck();
-		myDeck = deck;
 
-		for (int shuffleNum = 0; shuffleNum < NUMBER_OF_SHUFFLES; shuffleNum++){
-			myDeck.shuffle();
-		}
 		
 		//the arraylist posAssign will contain numOfPlayer integers
 		//which are shuffled and distributed to each player to give
@@ -59,8 +55,6 @@ public class PokerGame {
 			//assign random position to each player
 			int pos = posAssign.get(i); 	
 			players[i] = new Player("Player " + i, STARTING_CASH, pos);
-			//deal 2 cards to each player
-			players[i].receiveHand(myDeck.deal(2));
 		}
 
 		//initialize where current action is
@@ -69,8 +63,22 @@ public class PokerGame {
 			actionIndex = 0;
 		} // need more code to deal with 3,4,5,6,7,8,9 players
 
-		//initialize a blank deck (all null)
-		board = new Card[5]; 
+		startNewHand();
+		
+	}
+	
+	public void startNewHand() {
+		
+
+		hand.add(new Hand(this));
+		
+		
+		//do another hand
+
+		
+		
+		
+
 		
 	}
 
@@ -83,19 +91,19 @@ public class PokerGame {
 			actionIndex = actionIndex + 1;
 		}
 	}
-
+/*
 	public void fillBoard(){
 		switch(street){
 			//flop
-			case 1: board[0] = myDeck.deal(1)[0];
-					board[1] = myDeck.deal(1)[0];
-					board[2] = myDeck.deal(1)[0];
+			case 1: board[0] = deck.deal(1)[0];
+					board[1] = deck.deal(1)[0];
+					board[2] = deck.deal(1)[0];
 				break;
 			//turn
-			case 2: board[3] = myDeck.deal(1)[0];
+			case 2: board[3] = deck.deal(1)[0];
 				break;
 			//river
-			case 3: board[4] = myDeck.deal(1)[0];
+			case 3: board[4] = deck.deal(1)[0];
 				break;
 		}
 	}
@@ -108,5 +116,5 @@ public class PokerGame {
 			street = street + 1;
 		}
 	}
-
+*/
 }

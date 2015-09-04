@@ -25,7 +25,10 @@ public class Card {
 	}
 
 	public String toString() {
-		return rank.getValue() + suit.getValue();
+		String retVal = "";
+		retVal += rank.getValue() + suit.getValue();
+		return retVal;
+		
 	}
 	
 	public boolean equals(Object o) {

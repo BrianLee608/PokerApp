@@ -2,7 +2,7 @@ package poker;
 
 public enum Rank {
 
-	Deuce("2"),
+	DEUCE("2"),
 	THREE("3"),
 	FOUR("4"),
 	FIVE("5"),
@@ -25,5 +25,6 @@ public enum Rank {
 	public String getValue() {
 		return value;
 	}
+
 
 }
