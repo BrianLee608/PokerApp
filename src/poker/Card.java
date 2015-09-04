@@ -1,8 +1,10 @@
-package poker;
-
 /*
  @author Brian Lee & Dennis Deng (c) 2015
+ An immutable class representing an object composed of a unique 
+ combination of the enums, rank and suit
 */
+ 
+package poker;
 
 public class Card {
 

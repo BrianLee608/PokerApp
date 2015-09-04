@@ -1,3 +1,6 @@
+//The PokerGame class represents a session of poker
+
+
 package poker;
 import java.util.ArrayList;
 
@@ -10,23 +13,26 @@ public class PokerGame {
 	private static final int NUMBER_OF_SHUFFLES = 3;
 	
 	//variables
+	public boolean gameIsLive;
 	public int handNumber; 
-	public static int totalPlayers;
+	public int totalPlayers;
 	public int sbIndex;
 	public int bbIndex;
 	public int actionIndex;
+	public Deck deck;
 	public Player [] players;
 	public Card [] board;
-	public Deck deck;
-	
-	public ArrayList<Hand> hand = new ArrayList<Hand>();
+	public ArrayList<Hand> hand;
 	
 	//Instantiate this when a fresh new game starts
 	public PokerGame(int numOfPlayers) {
 
+		//Initialize a blank array of hands
+		hand = new ArrayList<Hand>();
+		
 		totalPlayers = numOfPlayers;
 
-		handNumber = 0;
+		handNumber = 0; //used to index the 
 		sbIndex = 0;
 		bbIndex = 1;
 		//Action starts on UTG
@@ -60,26 +66,25 @@ public class PokerGame {
 		//initialize where current action is
 		if (numOfPlayers == 2) {
 			//Small blind is first to act headsup
+			//but not for post-flop.......
 			actionIndex = 0;
 		} // need more code to deal with 3,4,5,6,7,8,9 players
 
+		//Initially, game will always be live.... 
+		//until only 1 player is remaining
+		gameIsLive = true;
+		
 		startNewHand();
 		
 	}
 	
 	public void startNewHand() {
 		
-
-		hand.add(new Hand(this));
-		
-		
-		//do another hand
-
-		
-		
+		while (gameIsLive) {
+			hand.add(new Hand(this));
+		}
 		
 
-		
 	}
 
 	public void nextTurn(){

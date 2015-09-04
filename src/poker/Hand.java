@@ -8,12 +8,10 @@ public class Hand {
 	
 	
 	private static final int NUMBER_OF_SHUFFLES = 3;
-	
+	private static final int PRE_FLOP = 9;
 	private static final int FLOP = 10;
 	private static final int TURN = 11;
 	private static final int RIVER = 12;
-	
-	
 	
 	Deck deck;
 	public int pot;
@@ -25,6 +23,12 @@ public class Hand {
 	private boolean isCorrect;
 	private int betsize;
 	
+	//This hand lives inside an array which a PokerGame object has access to.
+	//This constructor will create a temporary array of players which will be
+	//updated as players fold.
+	//This Hand object will have its own deck and the board/burn cards
+	//will be pre-loaded in this constructor. They will become visible accordingly
+	//as action proceeds.
 	public Hand(PokerGame game) {
 		
 		//copy over players from the game class as a shallow copy
@@ -51,11 +55,28 @@ public class Hand {
 		deck.deal(3);
 		
 		
-		System.out.println(Arrays.toString(board));
+		printBoard(PRE_FLOP);
 		
 		startPreFlop(game);
 		
+	}
+	
+	private void printBoard(int street) {
 		
+		switch(street) {
+		case PRE_FLOP: 
+			System.out.println("Preflop: [ ]");
+			break;
+		case FLOP:
+			System.out.println(Arrays.toString(Arrays.copyOfRange(board,0,4)));
+			break;
+		case TURN:
+			System.out.println(Arrays.toString(Arrays.copyOfRange(board,0,5)));
+			break;
+		case RIVER:
+			System.out.println(Arrays.toString(board));
+			break;
+		}
 		
 	}
 	
@@ -67,7 +88,8 @@ public class Hand {
 	
 	private void startStreet(PokerGame game, int street) {
 		
-		int currentBet = 0;
+		//is this right?
+		int currentBet = (street == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;
 		int tempActionCounter = game.actionIndex;
 			
@@ -85,8 +107,11 @@ public class Hand {
 				if (activePlayers.get(tempActionCounter).playerFolded()) {
 					activePlayers.remove(activePlayers.get(tempActionCounter));
 				}
+				//If there is only 1 player remaining, he wins the pot and we
+				//must return from this method so the loop does not continue
 				if (activePlayers.size() == 1) {
 					activePlayers.get(0).winPot();
+					return;
 				}
 
 				if (tempActionCounter == activePlayers.size()-1) {

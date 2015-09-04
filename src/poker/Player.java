@@ -1,4 +1,4 @@
-//Players are immutable
+//Players are mutable
 
 package poker;
 
@@ -72,7 +72,7 @@ public class Player {
 	}
 	
 	
-	public void spendMoney(int amount) {
+	private void spendMoney(int amount) {
 
 		money -= amount;
 
@@ -84,7 +84,7 @@ public class Player {
 		
 	}
 	
-	public void fold() {
+	private void fold() {
 		
 		folded = true;
 		
