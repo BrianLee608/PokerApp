@@ -18,10 +18,10 @@ public class Hand {
 	public int street;
 	private ArrayList<Player> activePlayers;
 	public Card [] board;
-	private String action;
-	private Scanner in;
-	private boolean isCorrect;
-	private int betsize;
+	//private String action;
+	//private Scanner in;
+	//private boolean isCorrect;
+	//private int betsize;
 	
 	//This hand lives inside an array which a PokerGame object has access to.
 	//This constructor will create a temporary array of players which will be
@@ -54,9 +54,6 @@ public class Hand {
 		//pre-burn 3 cards
 		deck.deal(3);
 		
-		
-		printBoard(PRE_FLOP);
-		
 		startPreFlop(game);
 		
 	}
@@ -65,18 +62,21 @@ public class Hand {
 		
 		switch(street) {
 		case PRE_FLOP: 
-			System.out.println("Preflop: [ ]");
+			System.out.println("\t\t\tPreflop: [ ]");
 			break;
 		case FLOP:
-			System.out.println(Arrays.toString(Arrays.copyOfRange(board,0,4)));
+			System.out.println("\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
 			break;
 		case TURN:
-			System.out.println(Arrays.toString(Arrays.copyOfRange(board,0,5)));
+			System.out.println("\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
 			break;
 		case RIVER:
-			System.out.println(Arrays.toString(board));
+			System.out.println("\t\t\t" + Arrays.toString(board));
 			break;
 		}
+		System.out.println("\t\t\tActive Players: " + activePlayers);
+		System.out.println("\t\t\tPot: $" + pot);
+		
 		
 	}
 	
@@ -86,21 +86,26 @@ public class Hand {
 		
 	}
 	
-	private void startStreet(PokerGame game, int street) {
+	private void startStreet(PokerGame game, int streetIn) {
+		
+		printBoard(streetIn);
 		
 		//is this right?
-		int currentBet = (street == PRE_FLOP) ? game.BIG_BLIND : 0;
+		//initialize currentBet according to street. 
+		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;
 		int tempActionCounter = game.actionIndex;
 			
+	
 		while(true) {
 		
 			for (int i = 0; i < activePlayers.size(); i++) {
+				System.out.println("pot: " + pot);
 				tempBet = currentBet;
 				
-				int currBet = activePlayers.get(tempActionCounter).act(currentBet);
-				if (currBet > 0) {
-					currentBet = currBet;
+				int playerBet = activePlayers.get(tempActionCounter).act(currentBet);
+				if (playerBet > 0) {
+					currentBet = playerBet;
 					this.addToPot(currentBet);
 				}
 
@@ -110,7 +115,7 @@ public class Hand {
 				//If there is only 1 player remaining, he wins the pot and we
 				//must return from this method so the loop does not continue
 				if (activePlayers.size() == 1) {
-					activePlayers.get(0).winPot();
+					activePlayers.get(0).winPot(pot);
 					return;
 				}
 
@@ -135,8 +140,7 @@ public class Hand {
 		activePlayers.get(game.sbIndex).postSB();
 		this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 
-		System.out.println("PREFLOP");
-		startStreet(game,FLOP);
+		startStreet(game,PRE_FLOP);
 		
 	}
 

@@ -90,61 +90,63 @@ public class Player {
 		
 	}
 	
-	public int act(int minimumBet){
+	//This method gets called from a method in the Hand object (startStreet())
+	//In that method, each player is looped through to act();
+	public int act(int minimumBet) {
 		
 		Scanner in = new Scanner(System.in);
 		boolean isCorrect = false;
 		String action;
 		int betSize = minimumBet;
 		
-		if(!this.folded){
+		if(!this.folded) {
 			// Output board and player stats
 			System.out.println(this);
 
 			while(isCorrect == false){
-				System.out.println("Bet/Check/Call/Fold");
+				System.out.print("Bet/Check/Call/Fold: ");
 				action = in.nextLine();
 
 				// Checks what action user inputs
-				if(action.equalsIgnoreCase("Bet")){
-					System.out.println("Size");
+				if(action.equalsIgnoreCase("Bet")) {
+					System.out.print("Size: ");
 					betSize = in.nextInt();
 					//Required since nextInt() doesn't actually read a next line
 					in.nextLine();
-					if(betSize < 2*minimumBet || betSize == 0){
-						System.out.println("Illegal bet size");
+					if(betSize < 2*minimumBet || betSize == 0) { 
+						System.out.print("Illegal bet size");
 						betSize = minimumBet;
 					} else if (money < betSize) {
-						System.out.println("Not enough money");
+						System.out.print("Not enough money");
 						betSize = minimumBet;
 					} else {
 						this.spendMoney(betSize);
 						isCorrect = true;
 					}
 				}
-				else if(action.equalsIgnoreCase("Check")){
+				//we need a way for BB to check b/c minbet is still > 0 for him
+				else if(action.equalsIgnoreCase("Check")) {
 					if(minimumBet > 0){
-						System.out.println("You cannot check when the pot is raised");
-					}
-					else{
+						System.out.print("You cannot check when the pot is raised");
+					} else{
 						isCorrect = true;
 						betSize = 0;
 					}
 				}
-				else if(action.equalsIgnoreCase("Call")){
+				else if(action.equalsIgnoreCase("Call")) {
 					this.spendMoney(betSize);
 					isCorrect = true;
 					betSize = minimumBet;
 				}
-				else if(action.equalsIgnoreCase("Fold")){
+				else if(action.equalsIgnoreCase("Fold")) {
 					this.fold();
 					isCorrect = true;
 					betSize = 0;
-					System.out.println("Nit");
+					System.out.print("Nit");
 
 				}
-				else{
-					System.out.println("Incorrect Action, Please Try Again");
+				else {
+					System.out.print("Incorrect Action, Please Try Again\n");
 				}
 			}
 		}
@@ -153,16 +155,17 @@ public class Player {
 	
 	
 	
-	public void winPot() {
+	public void winPot(int amount) {
 		
+		money += amount;
 		
 	}
 	
 	public String toString() {
 		
 		String retVal = "";
-		retVal += name + ": " + "$" + money + ", " + 
-					holeCards[0] + holeCards[1] + ", " + position;
+		retVal += name + ":" + "$" + money + "--" + 
+					holeCards[0] + holeCards[1] + "--" + position;
 		return retVal;
 		
 	}

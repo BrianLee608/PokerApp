@@ -19,7 +19,6 @@ public class PokerGame {
 	public int sbIndex;
 	public int bbIndex;
 	public int actionIndex;
-	public Deck deck;
 	public Player [] players;
 	public Card [] board;
 	public ArrayList<Hand> hand;
