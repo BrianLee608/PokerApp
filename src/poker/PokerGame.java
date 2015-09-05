@@ -58,8 +58,9 @@ public class PokerGame {
 		players = new Player[numOfPlayers];
 		for (int i = 0; i < numOfPlayers; i++) {
 			//assign random position to each player
-			int pos = posAssign.get(i); 	
-			players[i] = new Player("Player " + i, STARTING_CASH, pos);
+			int pos = posAssign.get(i);
+			//Assigning random positions makes it difficult to access the right correct player based on position using an arraylist
+			players[i] = new Player("Player " + i, STARTING_CASH, i);
 		}
 
 		//initialize where current action is
@@ -78,47 +79,18 @@ public class PokerGame {
 	}
 	
 	public void startNewHand() {
+
+		if(actionIndex == totalPlayers-1){
+			actionIndex = 0;
+		}
+		else{
+			actionIndex++;
+		}
 		
 		while (gameIsLive) {
 			hand.add(new Hand(this));
 		}
-		
 
 	}
 
-	public void nextTurn(){
-		// Reset actionIndex
-		if (actionIndex == totalPlayers-1){
-			actionIndex = 0;
-		}
-		else{
-			actionIndex = actionIndex + 1;
-		}
-	}
-/*
-	public void fillBoard(){
-		switch(street){
-			//flop
-			case 1: board[0] = deck.deal(1)[0];
-					board[1] = deck.deal(1)[0];
-					board[2] = deck.deal(1)[0];
-				break;
-			//turn
-			case 2: board[3] = deck.deal(1)[0];
-				break;
-			//river
-			case 3: board[4] = deck.deal(1)[0];
-				break;
-		}
-	}
-
-	public void changeStreet(){
-		if(street==3){
-			street = 0;
-		}
-		else{
-			street = street + 1;
-		}
-	}
-*/
 }

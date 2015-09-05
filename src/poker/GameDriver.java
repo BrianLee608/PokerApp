@@ -7,8 +7,7 @@ public class GameDriver {
 	public static void main(String[] args) {
 		
 		PokerGame pokerGame;
-		
-		
+
 		Scanner in = new Scanner(System.in);
 		
 		do {
@@ -17,7 +16,7 @@ public class GameDriver {
 				+ "\t\t Brian Lee & Dennis Deng 2015(c)\n\n");
 
 		pokerGame = new PokerGame(2);
-		
+
 		System.out.print("Would you like to play another poker game?: ");
 		String askUserIfWantToPlay;
 		askUserIfWantToPlay = in.nextLine().toLowerCase();

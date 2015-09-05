@@ -95,16 +95,34 @@ public class Hand {
 		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;
 		int tempActionCounter = game.actionIndex;
-			
-	
+		//Reset how much each player has bet on a particular street
+		for (int j = 0; j < activePlayers.size(); j++) {
+			activePlayers.get(j).setStreetMoney(0);
+		}
+
 		while(true) {
-		
 			for (int i = 0; i < activePlayers.size(); i++) {
 				System.out.println("pot: " + pot);
 				tempBet = currentBet;
 				
 				int playerBet = activePlayers.get(tempActionCounter).act(currentBet);
-				if (playerBet > 0) {
+
+				//Bet
+				if (playerBet > currentBet) {
+					currentBet = playerBet;
+					this.addToPot(currentBet);
+					//Set whoever bets as end of action (sets everyone else to false)
+					for (int k = 0; k < activePlayers.size(); k++) {
+						if(k == tempActionCounter){
+							activePlayers.get(k).setEndAction(true);
+						}
+						else{
+							activePlayers.get(k).setEndAction(false);
+						}
+					}
+				}
+				//Call
+				else if (playerBet < currentBet && playerBet != 0){
 					currentBet = playerBet;
 					this.addToPot(currentBet);
 				}
@@ -118,8 +136,21 @@ public class Hand {
 					activePlayers.get(0).winPot(pot);
 					return;
 				}
-
-				if (tempActionCounter == activePlayers.size()-1) {
+				//If preflop and action ends on player check if he is BB (allows BB to still act)
+				if (activePlayers.get(tempActionCounter).endAction == true && streetIn == 9) {
+					//If not BB (someone else has raised) continue moving until we get to end of action
+					if(activePlayers.get(game.bbIndex).endAction == false){
+						tempActionCounter++;
+					}
+					else{
+						return;
+					}
+				}
+				//If not preflop and action ends on player break out of loop
+				else if (activePlayers.get(tempActionCounter).endAction == true && streetIn != 9) {
+					return;
+				}
+				else if (tempActionCounter == activePlayers.size()-1) {
 					tempActionCounter = 0;
 				} else {
 					tempActionCounter++;
@@ -137,26 +168,18 @@ public class Hand {
 	private void startPreFlop(PokerGame game) {
 		
 		activePlayers.get(game.sbIndex).postSB();
-		activePlayers.get(game.sbIndex).postSB();
+		activePlayers.get(game.sbIndex).setStreetMoney(PokerGame.SMALL_BLIND);
+
+		activePlayers.get(game.bbIndex).postBB();
+		activePlayers.get(game.bbIndex).setStreetMoney(PokerGame.BIG_BLIND);
+		activePlayers.get(game.bbIndex).setEndAction(true);
+
 		this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 
-		startStreet(game,PRE_FLOP);
-		
+		startStreet(game, PRE_FLOP);
+		startStreet(game, FLOP);
+		startStreet(game, TURN);
+		startStreet(game, RIVER);
 	}
-
-	private void dealFlop(PokerGame game) {
-		
-	}
-
-	private void dealTurn(PokerGame game) {
-
-	}
-
-	private void dealRiver(PokerGame game) {
-
-	}
-
-	
-	
 
 }

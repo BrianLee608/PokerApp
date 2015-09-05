@@ -14,6 +14,8 @@ public class Player {
 	private boolean DEALER;
 	private boolean turnToAct; 
 	private boolean folded;
+	private int streetMoney;
+	public boolean endAction;
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
 	
@@ -126,7 +128,7 @@ public class Player {
 				}
 				//we need a way for BB to check b/c minbet is still > 0 for him
 				else if(action.equalsIgnoreCase("Check")) {
-					if(minimumBet > 0){
+					if(minimumBet - streetMoney > 0){
 						System.out.print("You cannot check when the pot is raised");
 					} else{
 						isCorrect = true;
@@ -134,9 +136,9 @@ public class Player {
 					}
 				}
 				else if(action.equalsIgnoreCase("Call")) {
-					this.spendMoney(betSize);
+					this.spendMoney(betSize - streetMoney);
 					isCorrect = true;
-					betSize = minimumBet;
+					betSize = minimumBet - streetMoney;
 				}
 				else if(action.equalsIgnoreCase("Fold")) {
 					this.fold();
@@ -153,12 +155,18 @@ public class Player {
 		return betSize;
 	}
 	
-	
-	
 	public void winPot(int amount) {
 		
 		money += amount;
 		
+	}
+
+	public void setStreetMoney(int amount){
+		streetMoney += amount;
+	}
+
+	public void setEndAction(boolean bool){
+		endAction = bool;
 	}
 	
 	public String toString() {
