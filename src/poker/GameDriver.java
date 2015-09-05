@@ -13,7 +13,7 @@ public class GameDriver {
 		do {
 		
 		System.out.println("\t\t\tTexas Holdem Game\n\t\t\t   created by\n"
-				+ "\t\t Brian Lee & Dennis Deng 2015(c)\n\n");
+				+ "\t\t\tBrian Lee & Dennis Deng 2015(c)");
 
 		pokerGame = new PokerGame(2);
 

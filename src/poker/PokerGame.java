@@ -22,6 +22,7 @@ public class PokerGame {
 	public Player [] players;
 	public Card [] board;
 	public ArrayList<Hand> hand;
+	public int dealerIndex;
 	
 	//Instantiate this when a fresh new game starts
 	public PokerGame(int numOfPlayers) {
@@ -36,10 +37,7 @@ public class PokerGame {
 		bbIndex = 1;
 		//Action starts on UTG
 		actionIndex = 2;
-		//Pre = 0, flop = 1, turn = 2, river = 3
 
-
-		
 		//the arraylist posAssign will contain numOfPlayer integers
 		//which are shuffled and distributed to each player to give
 		//each player a unique position 
@@ -79,13 +77,6 @@ public class PokerGame {
 	}
 	
 	public void startNewHand() {
-
-		if(actionIndex == totalPlayers-1){
-			actionIndex = 0;
-		}
-		else{
-			actionIndex++;
-		}
 		
 		while (gameIsLive) {
 			hand.add(new Hand(this));

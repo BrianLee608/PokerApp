@@ -14,8 +14,10 @@ public class Player {
 	private boolean DEALER;
 	private boolean turnToAct; 
 	private boolean folded;
-	private int streetMoney;
+	public int streetMoney;
 	public boolean endAction;
+	public boolean BBActed;
+	public boolean dealerActed;
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
 	
@@ -116,10 +118,10 @@ public class Player {
 					//Required since nextInt() doesn't actually read a next line
 					in.nextLine();
 					if(betSize < 2*minimumBet || betSize == 0) { 
-						System.out.print("Illegal bet size");
+						System.out.print("Illegal bet size\n");
 						betSize = minimumBet;
 					} else if (money < betSize) {
-						System.out.print("Not enough money");
+						System.out.print("Not enough money\n");
 						betSize = minimumBet;
 					} else {
 						this.spendMoney(betSize);
@@ -129,22 +131,27 @@ public class Player {
 				//we need a way for BB to check b/c minbet is still > 0 for him
 				else if(action.equalsIgnoreCase("Check")) {
 					if(minimumBet - streetMoney > 0){
-						System.out.print("You cannot check when the pot is raised");
+						System.out.print("You cannot check when the pot is raised\n");
 					} else{
 						isCorrect = true;
 						betSize = 0;
 					}
 				}
 				else if(action.equalsIgnoreCase("Call")) {
-					this.spendMoney(betSize - streetMoney);
-					isCorrect = true;
-					betSize = minimumBet - streetMoney;
+					if(minimumBet == 0){
+						System.out.print("You cannot call when there is no bet\n");
+					}
+					else{
+						this.spendMoney(betSize - streetMoney);
+						isCorrect = true;
+						betSize = minimumBet - streetMoney;
+					}
 				}
 				else if(action.equalsIgnoreCase("Fold")) {
 					this.fold();
 					isCorrect = true;
 					betSize = 0;
-					System.out.print("Nit");
+					System.out.print("Nit\n");
 
 				}
 				else {
@@ -165,8 +172,20 @@ public class Player {
 		streetMoney += amount;
 	}
 
+	public void resetStreetMoney(){
+		streetMoney = 0;
+	}
+
 	public void setEndAction(boolean bool){
 		endAction = bool;
+	}
+
+	public void hasBBActed(boolean bool){
+		BBActed = bool;
+	}
+
+	public void hasDealerActed(boolean bool){
+		dealerActed = bool;
 	}
 	
 	public String toString() {

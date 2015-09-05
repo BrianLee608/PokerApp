@@ -62,20 +62,20 @@ public class Hand {
 		
 		switch(street) {
 		case PRE_FLOP: 
-			System.out.println("\t\t\tPreflop: [ ]");
+			System.out.println("\n\t\t\tPreflop");
 			break;
 		case FLOP:
-			System.out.println("\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
+			System.out.println("\n\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
 			break;
 		case TURN:
-			System.out.println("\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
+			System.out.println("\n\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
 			break;
 		case RIVER:
-			System.out.println("\t\t\t" + Arrays.toString(board));
+			System.out.println("\n\t\t\t" + Arrays.toString(board));
 			break;
 		}
 		System.out.println("\t\t\tActive Players: " + activePlayers);
-		System.out.println("\t\t\tPot: $" + pot);
+		System.out.println("\t\t\tPot: $" + pot + "\n");
 		
 		
 	}
@@ -87,27 +87,93 @@ public class Hand {
 	}
 	
 	private void startStreet(PokerGame game, int streetIn) {
-		
-		printBoard(streetIn);
-		
-		//is this right?
+
 		//initialize currentBet according to street. 
 		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;
 		int tempActionCounter = game.actionIndex;
-		//Reset how much each player has bet on a particular street
-		for (int j = 0; j < activePlayers.size(); j++) {
-			activePlayers.get(j).setStreetMoney(0);
+		//Reset how much each player has bet on a particular street, and set endAction to last player (skip if preflop)
+		if(streetIn != 9){
+			for (int j = 0; j < activePlayers.size(); j++) {
+				//Reset money
+				activePlayers.get(j).resetStreetMoney();
+				//If sbIndex is 0, set endAction as last player in hand
+				if(j == game.sbIndex){
+					//For headsup, sb is the dealer
+					if(game.totalPlayers == 2){
+						game.dealerIndex = game.sbIndex;
+						activePlayers.get(game.dealerIndex).setEndAction(true);
+						activePlayers.get(game.dealerIndex).hasDealerActed(false);
+					}
+					//For all other cases, if sb is in the 0 spot, set dealer/endAction to last position
+					else if(game.sbIndex == 0){
+						game.dealerIndex = activePlayers.size()-1;
+						activePlayers.get(activePlayers.size()-1).setEndAction(true);
+						activePlayers.get(activePlayers.size()-1).hasDealerActed(false);
+					}
+					//Otherwise, set dealer to one behind the small blind
+					else{
+						game.dealerIndex = game.sbIndex-1;
+						activePlayers.get(game.dealerIndex-1).setEndAction(true);
+						activePlayers.get(game.dealerIndex-1).hasDealerActed(false);
+					}
+				}
+				//Reset all other endAction to false
+				else{
+					activePlayers.get(j).setEndAction(false);
+				}
+			}
 		}
 
 		while(true) {
 			for (int i = 0; i < activePlayers.size(); i++) {
-				System.out.println("pot: " + pot);
-				tempBet = currentBet;
-				
-				int playerBet = activePlayers.get(tempActionCounter).act(currentBet);
+				//If it's not preflop and action ends on player break out of loop
+				if (activePlayers.get(tempActionCounter).endAction && streetIn != PRE_FLOP) {
+					//Once last to act has acted preflop actions ends (unless pot is raised)
+					if(activePlayers.get(game.dealerIndex).dealerActed){
+						return;
+					}
+				}
+				//If it's preflop and action ends on player check if he is BB (allows BB to still act)
+				else if (activePlayers.get(tempActionCounter).endAction && streetIn == PRE_FLOP) {
+					//Once BB has acted preflop actions ends (unless pot is raised)
+					if(activePlayers.get(game.bbIndex).BBActed){
+						return;
+					}
+				}
 
-				//Bet
+				//Print out pot and allow player to act
+				System.out.println("pot: " + pot);
+				int playerBet = activePlayers.get(tempActionCounter).act(currentBet);
+				//TempBet is used to gauge whether player action was a bet, call, or check/fold (see end of method)
+				tempBet = currentBet;
+
+				//Set hasBBActed to true the first time BB has acted (only during preflop)
+				if(tempActionCounter == game.bbIndex && streetIn == PRE_FLOP){
+					activePlayers.get(game.bbIndex).hasBBActed(true);
+					//Arbitrarily set next player to act as endAction (allows BB to act)
+					if(tempActionCounter == activePlayers.size()-1){
+						activePlayers.get(0).setEndAction(true);
+					}
+					else{
+						activePlayers.get(tempActionCounter+1).setEndAction(true);
+					}
+					//If BB bets then action is reset (occurs in if statement below)
+				}
+				//Set hasDealerActed to true the first time dealer has acted
+				else if(tempActionCounter == game.dealerIndex && streetIn != PRE_FLOP){
+					activePlayers.get(game.dealerIndex).hasDealerActed(true);
+					//Arbitrarily set next player to act as endAction (allows dealer to act)
+					if(tempActionCounter == activePlayers.size()-1){
+						activePlayers.get(0).setEndAction(true);
+					}
+					else{
+						activePlayers.get(tempActionCounter+1).setEndAction(true);
+					}
+					//If dealer bets then action is reset (occurs in if statement below)
+				}
+
+				//Bet - sets where action ends
 				if (playerBet > currentBet) {
 					currentBet = playerBet;
 					this.addToPot(currentBet);
@@ -121,44 +187,45 @@ public class Hand {
 						}
 					}
 				}
-				//Call
+				//Call - doesn't affect where action ends
 				else if (playerBet < currentBet && playerBet != 0){
 					currentBet = playerBet;
 					this.addToPot(currentBet);
 				}
 
+				//Remove players from arraylist as they fold
 				if (activePlayers.get(tempActionCounter).playerFolded()) {
+					//Change action index if it's starts on a deleted player
+					if(tempActionCounter == game.actionIndex) {
+						//If action index is on player 0 then the last player gets the action index
+						if(game.actionIndex == 0) {
+							game.actionIndex = activePlayers.size();
+						}
+						//Otherwise shift action index back by 1
+						else{
+							game.actionIndex -= 1;
+						}
+					}
 					activePlayers.remove(activePlayers.get(tempActionCounter));
 				}
-				//If there is only 1 player remaining, he wins the pot and we
-				//must return from this method so the loop does not continue
+
+				//End while loop when only one player remains
 				if (activePlayers.size() == 1) {
 					activePlayers.get(0).winPot(pot);
 					return;
 				}
-				//If preflop and action ends on player check if he is BB (allows BB to still act)
-				if (activePlayers.get(tempActionCounter).endAction == true && streetIn == 9) {
-					//If not BB (someone else has raised) continue moving until we get to end of action
-					if(activePlayers.get(game.bbIndex).endAction == false){
-						tempActionCounter++;
-					}
-					else{
-						return;
-					}
-				}
-				//If not preflop and action ends on player break out of loop
-				else if (activePlayers.get(tempActionCounter).endAction == true && streetIn != 9) {
-					return;
-				}
-				else if (tempActionCounter == activePlayers.size()-1) {
+
+				//Cycle through whose turn it is (different from how many players)
+				if (tempActionCounter == activePlayers.size()-1) {
 					tempActionCounter = 0;
 				} else {
 					tempActionCounter++;
 				}
+
+				//If currentBet > tempBet then a bet has been made (as opposed to a check/call), and the for loop is broken
 				if(currentBet > tempBet){
 					break;
 				}
-		
 			}
 		}
 			
@@ -166,20 +233,35 @@ public class Hand {
 	
 	
 	private void startPreFlop(PokerGame game) {
-		
+		//Post sb and set how much sb
 		activePlayers.get(game.sbIndex).postSB();
 		activePlayers.get(game.sbIndex).setStreetMoney(PokerGame.SMALL_BLIND);
 
 		activePlayers.get(game.bbIndex).postBB();
 		activePlayers.get(game.bbIndex).setStreetMoney(PokerGame.BIG_BLIND);
 		activePlayers.get(game.bbIndex).setEndAction(true);
+		activePlayers.get(game.bbIndex).hasBBActed(false);
 
 		this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 
 		startStreet(game, PRE_FLOP);
+		startFlop(game);
+
+	}
+
+	private void startFlop(PokerGame game){
+		//Flip order of who acts postflop (headsup)
+		if(game.totalPlayers==2){
+			if(game.actionIndex == 0){
+				game.actionIndex = 1;
+			}
+			else{
+				game.actionIndex = 0;
+			}
+		}
+
 		startStreet(game, FLOP);
-		startStreet(game, TURN);
-		startStreet(game, RIVER);
+
 	}
 
 }
