@@ -16,7 +16,6 @@ public class Player {
 	private boolean folded;
 	public int streetMoney;
 	public boolean endAction;
-	public boolean dealerActed;
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
 	
@@ -112,19 +111,29 @@ public class Player {
 
 				// Checks what action user inputs
 				if(action.equalsIgnoreCase("Bet")) {
-					System.out.print("Size: ");
-					betSize = in.nextInt();
-					//Required since nextInt() doesn't actually read a next line
-					in.nextLine();
-					if(betSize < 2*minimumBet || betSize == 0) { 
-						System.out.print("Illegal bet size\n");
-						betSize = minimumBet;
-					} else if (money < betSize) {
-						System.out.print("Not enough money\n");
-						betSize = minimumBet;
-					} else {
-						this.spendMoney(betSize);
-						isCorrect = true;
+					while(true){
+						try{
+							System.out.print("Size: ");
+							betSize = in.nextInt();
+							//Required since nextInt() doesn't actually read a next line
+							in.nextLine();
+							if(betSize < 2*minimumBet || betSize == 0) {
+								System.out.print("Illegal bet size\n");
+								betSize = minimumBet;
+							} else if (money < betSize) {
+								System.out.print("Not enough money\n");
+								betSize = minimumBet;
+							} else {
+								this.spendMoney(betSize);
+								isCorrect = true;
+							}
+							break;
+						}
+						catch(Exception e) {
+							System.out.print("Not a number\n");
+							in.next();
+							continue;
+						}
 					}
 				}
 				//we need a way for BB to check b/c minbet is still > 0 for him
@@ -177,10 +186,6 @@ public class Player {
 		endAction = bool;
 	}
 
-	public void hasDealerActed(boolean bool){
-		dealerActed = bool;
-	}
-	
 	public String toString() {
 		
 		String retVal = "";

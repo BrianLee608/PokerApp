@@ -61,12 +61,17 @@ public class PokerGame {
 			players[i] = new Player("Player " + i, STARTING_CASH, i);
 		}
 
-		//initialize where current action is
+		//initialize where dealer and action is (preflop)
 		if (numOfPlayers == 2) {
 			//Small blind is first to act headsup
-			//but not for post-flop.......
 			actionIndex = 0;
-		} // need more code to deal with 3,4,5,6,7,8,9 players
+			dealerIndex = 1;
+		}
+		else{
+			//Action index is after BB
+			actionIndex = 2;
+			dealerIndex = players.length - 1;
+		}
 
 		//Initially, game will always be live.... 
 		//until only 1 player is remaining
@@ -111,6 +116,14 @@ public class PokerGame {
 		}
 		else{
 			bbIndex += 1;
+		}
+
+		//Change dealer index for next hand
+		if(dealerIndex == totalPlayers-1){
+			dealerIndex = 0;
+		}
+		else{
+			dealerIndex += 1;
 		}
 	}
 

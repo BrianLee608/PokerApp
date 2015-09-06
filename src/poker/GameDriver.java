@@ -24,9 +24,7 @@ public class GameDriver {
 			break;
 		} // else if ("y") { play again(go back to top of loop }
 		
-		} while (true); 
-		
-		
+		} while (true);
 		
 		in.close();
 		
