@@ -53,20 +53,21 @@ public class Hand {
 		
 	}
 	
-	private void printBoard(int street) {
+	private void printBoard(int street, int handNum) {
 		
+		System.out.print("\n\t\t\tHand Number: " + handNum);
 		switch(street) {
 		case PRE_FLOP: 
-			System.out.println("\n\t\t\tPreflop");
+			System.out.println("\n\t\t\tPREFLOP");
 			break;
 		case FLOP:
-			System.out.println("\n\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
+			System.out.println("\n\t\t\tFLOP" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
 			break;
 		case TURN:
-			System.out.println("\n\t\t\t" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
+			System.out.println("\n\t\t\tTURN" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
 			break;
 		case RIVER:
-			System.out.println("\n\t\t\t" + Arrays.toString(board));
+			System.out.println("\n\t\t\tRIVER" + Arrays.toString(board));
 			break;
 		}
 		System.out.println("\t\t\tActive Players: " + activePlayers);
@@ -83,7 +84,7 @@ public class Hand {
 	
 	private void startStreet(PokerGame game, int streetIn, int startingIndex) {
 		//Output board
-		printBoard(streetIn);
+		printBoard(streetIn, game.handNumber);
 		//initialize currentBet according to street. 
 		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;

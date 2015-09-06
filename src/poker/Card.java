@@ -18,6 +18,13 @@ public class Card {
 		
 	}
 
+	public Card(Card other) {
+		
+		this.suit = other.suit;
+		this.rank = other.rank;
+		
+	}
+	
 	public Rank getRank() {
 		return rank;
 	}

@@ -85,10 +85,12 @@ public class PokerGame {
 		
 		while (gameIsLive) {
 			hand.add(new Hand(this));
+			handNumber++;
 			//After every hand change indexes
 			this.changeIndex();
 		}
 
+		
 	}
 
 	private void changeIndex(){

@@ -1,5 +1,6 @@
 package poker;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Deck {
@@ -103,6 +104,27 @@ public class Deck {
 		
 		this.deal(1);
 		
+	}
+	
+	public String toString() {
+		
+		return Arrays.deepToString(cards);
+	}
+	
+	public boolean equals(Object other) {
+		
+		if (!(other instanceof Deck)) {
+			return false;
+		}
+		
+		Deck o = (Deck)other;
+		for (int i = 0; i < this.getNumCards(); i++) {
+			if (this.cards[i].equals(o.cards[i]) == false) {
+				return false;
+			}
+		}
+		
+		return this.getNumCards() == o.getNumCards();
 	}
 	
 }
