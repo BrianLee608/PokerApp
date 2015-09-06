@@ -102,7 +102,7 @@ public class Player {
 		boolean isCorrect = false;
 		String action;
 		int betSize = minimumBet;
-		
+
 		if(!this.folded) {
 			// Output board and player stats
 			System.out.println(this);
@@ -191,7 +191,7 @@ public class Player {
 	public String toString() {
 		
 		String retVal = "";
-		retVal += name + ":" + "$" + money + "--" + 
+		retVal += name + ": " + "$" + money + "--" +
 					holeCards[0] + holeCards[1] + "--" + position;
 		return retVal;
 		

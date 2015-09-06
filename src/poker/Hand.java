@@ -87,11 +87,13 @@ public class Hand {
 	}
 	
 	private void startStreet(PokerGame game, int streetIn) {
-
+		//Output board
+		printBoard(streetIn);
 		//initialize currentBet according to street. 
 		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;
 		int tempActionCounter = game.actionIndex;
+
 		//Reset how much each player has bet on a particular street, and set endAction to last player (skip if preflop)
 		if(streetIn != 9){
 			for (int j = 0; j < activePlayers.size(); j++) {
@@ -148,6 +150,7 @@ public class Hand {
 				//TempBet is used to gauge whether player action was a bet, call, or check/fold (see end of method)
 				tempBet = currentBet;
 
+				//!!! Consolidate BBActed and dealerActed into just dealerActed
 				//Set hasBBActed to true the first time BB has acted (only during preflop)
 				if(tempActionCounter == game.bbIndex && streetIn == PRE_FLOP){
 					activePlayers.get(game.bbIndex).hasBBActed(true);
@@ -188,7 +191,7 @@ public class Hand {
 					}
 				}
 				//Call - doesn't affect where action ends
-				else if (playerBet < currentBet && playerBet != 0){
+				else if (playerBet <= currentBet && playerBet != 0){
 					currentBet = playerBet;
 					this.addToPot(currentBet);
 				}
@@ -245,7 +248,9 @@ public class Hand {
 		this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 
 		startStreet(game, PRE_FLOP);
-		startFlop(game);
+		if(activePlayers.size()!=1){
+			startFlop(game);
+		}
 
 	}
 
@@ -261,6 +266,52 @@ public class Hand {
 		}
 
 		startStreet(game, FLOP);
+
+		if(activePlayers.size()!=1){
+			startTurn(game);
+		}
+
+	}
+
+	private void startTurn(PokerGame game){
+
+		startStreet(game, TURN);
+
+		if(activePlayers.size()!=1){
+			startRiver(game);
+		}
+
+	}
+
+	private void startRiver(PokerGame game){
+
+		startStreet(game, RIVER);
+
+		//Change action index for next hand (doesn't change for headsup since we already flipped on the flop)
+		if(game.totalPlayers != 2){
+			if(game.actionIndex == game.totalPlayers-1){
+				game.actionIndex = 0;
+			}
+			else{
+				game.actionIndex += 1;
+			}
+		}
+
+		//Change sb index for next hand
+		if(game.sbIndex == game.totalPlayers-1){
+			game.sbIndex = 0;
+		}
+		else{
+			game.sbIndex += 1;
+		}
+
+		//Change bb index for next hand
+		if(game.bbIndex == game.totalPlayers-1){
+			game.bbIndex = 0;
+		}
+		else{
+			game.bbIndex += 1;
+		}
 
 	}
 
