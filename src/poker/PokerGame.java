@@ -92,14 +92,12 @@ public class PokerGame {
 	}
 
 	private void changeIndex(){
-		//Change action index for next hand (doesn't change for headsup since we already flipped on the flop)
-		if(totalPlayers != 2){
-			if(actionIndex == totalPlayers-1){ //if action was at end of array?
-				actionIndex = 0;
-			}
-			else {
-				actionIndex += 1;
-			}
+		//Change action index for next hand
+		if(actionIndex == totalPlayers-1){ //if action was at end of array?
+			actionIndex = 0;
+		}
+		else {
+			actionIndex += 1;
 		}
 
 		//Change sb index for next hand
