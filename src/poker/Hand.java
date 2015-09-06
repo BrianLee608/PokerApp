@@ -170,11 +170,28 @@ public class Hand {
 	
 	private void startPreFlop(PokerGame game) {
 		//Post sb and set how much sb has bet
+<<<<<<< HEAD
 		game.players[game.sbIndex].postSB();
 		game.players[game.sbIndex].setStreetMoney(PokerGame.SMALL_BLIND);
 		//Post bb and set how much bb has bet
 		game.players[game.bbIndex].postBB();
 		game.players[game.bbIndex].setStreetMoney(PokerGame.BIG_BLIND);
+=======
+		activePlayers.get(game.sbIndex).postSB();
+		activePlayers.get(game.sbIndex).setStreetMoney(PokerGame.SMALL_BLIND);
+		
+		//Post bb and set how much sb has bet
+		activePlayers.get(game.bbIndex).postBB();
+		activePlayers.get(game.bbIndex).setStreetMoney(PokerGame.BIG_BLIND);
+		
+		//Set BB as last to act preflop and reset BBAction
+		activePlayers.get(game.bbIndex).setEndAction(true);
+		//Set dealer as BB (only for preflop)
+		//??? 
+		game.dealerIndex = game.bbIndex;
+		//Note for preflop that last to act is the BB (not the dealer)
+		activePlayers.get(game.bbIndex).hasDealerActed(false);
+>>>>>>> d3edec6c30d1ffc39e78435c6aa94606122bd2d5
 
 		this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 

@@ -16,8 +16,13 @@ public class Player {
 	private boolean folded;
 	public int streetMoney;
 	public boolean endAction;
+<<<<<<< HEAD
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
+=======
+	public boolean dealerActed;
+
+>>>>>>> d3edec6c30d1ffc39e78435c6aa94606122bd2d5
 	
 	public Player(String name, int money, int position) {
 		
