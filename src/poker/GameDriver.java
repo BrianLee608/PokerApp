@@ -15,7 +15,7 @@ public class GameDriver {
 		System.out.println("\t\t\tTexas Holdem Game\n\t\t\t   created by\n"
 				+ "\t\t\tBrian Lee & Dennis Deng 2015(c)");
 
-		pokerGame = new PokerGame(7);
+		pokerGame = new PokerGame(3);
 
 		System.out.print("Would you like to play another poker game?: ");
 		String askUserIfWantToPlay;

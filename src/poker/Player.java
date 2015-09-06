@@ -12,11 +12,10 @@ public class Player {
 	private Card [] holeCards;
 	private int position;
 	private boolean DEALER;
-	private boolean turnToAct; 
+	private boolean turnToAct;
 	private boolean folded;
 	public int streetMoney;
 	public boolean endAction;
-	public boolean BBActed;
 	public boolean dealerActed;
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
@@ -144,15 +143,13 @@ public class Player {
 					else{
 						this.spendMoney(minimumBet - streetMoney);
 						isCorrect = true;
-						betSize = minimumBet;
+						betSize = minimumBet - streetMoney;
 					}
 				}
 				else if(action.equalsIgnoreCase("Fold")) {
 					this.fold();
 					isCorrect = true;
 					betSize = 0;
-					System.out.print("Nit\n");
-
 				}
 				else {
 					System.out.print("Incorrect Action, Please Try Again\n");
@@ -180,10 +177,6 @@ public class Player {
 		endAction = bool;
 	}
 
-	public void hasBBActed(boolean bool){
-		BBActed = bool;
-	}
-
 	public void hasDealerActed(boolean bool){
 		dealerActed = bool;
 	}
@@ -192,11 +185,9 @@ public class Player {
 		
 		String retVal = "";
 		retVal += name + ": " + "$" + money + "--" +
-					holeCards[0] + holeCards[1] + "--" + position;
+					holeCards[0] + holeCards[1];
 		return retVal;
 		
 	}
-
-
 
 }

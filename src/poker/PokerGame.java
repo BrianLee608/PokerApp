@@ -80,8 +80,38 @@ public class PokerGame {
 		
 		while (gameIsLive) {
 			hand.add(new Hand(this));
+			//After every hand change indexes
+			this.changeIndex();
 		}
 
+	}
+
+	private void changeIndex(){
+		//Change action index for next hand (doesn't change for headsup since we already flipped on the flop)
+		if(totalPlayers != 2){
+			if(actionIndex == totalPlayers-1){
+				actionIndex = 0;
+			}
+			else{
+				actionIndex += 1;
+			}
+		}
+
+		//Change sb index for next hand
+		if(sbIndex == totalPlayers-1){
+			sbIndex = 0;
+		}
+		else{
+			sbIndex += 1;
+		}
+
+		//Change bb index for next hand
+		if(bbIndex == totalPlayers-1){
+			bbIndex = 0;
+		}
+		else{
+			bbIndex += 1;
+		}
 	}
 
 }

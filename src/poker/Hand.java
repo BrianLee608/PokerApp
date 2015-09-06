@@ -18,10 +18,7 @@ public class Hand {
 	public int street;
 	private ArrayList<Player> activePlayers;
 	public Card [] board;
-	//private String action;
-	//private Scanner in;
-	//private boolean isCorrect;
-	//private int betsize;
+	public int startingIndex;
 	
 	//This hand lives inside an array which a PokerGame object has access to.
 	//This constructor will create a temporary array of players which will be
@@ -86,13 +83,13 @@ public class Hand {
 		
 	}
 	
-	private void startStreet(PokerGame game, int streetIn) {
+	private void startStreet(PokerGame game, int streetIn, int startingIndex) {
 		//Output board
 		printBoard(streetIn);
 		//initialize currentBet according to street. 
 		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
 		int tempBet;
-		int tempActionCounter = game.actionIndex;
+		int tempActionCounter = startingIndex;
 
 		//Reset how much each player has bet on a particular street, and set endAction to last player (skip if preflop)
 		if(streetIn != PRE_FLOP){
@@ -116,8 +113,8 @@ public class Hand {
 					//Otherwise, set dealer to one behind the small blind
 					else{
 						game.dealerIndex = game.sbIndex-1;
-						activePlayers.get(game.dealerIndex-1).setEndAction(true);
-						activePlayers.get(game.dealerIndex-1).hasDealerActed(false);
+						activePlayers.get(game.dealerIndex).setEndAction(true);
+						activePlayers.get(game.dealerIndex).hasDealerActed(false);
 					}
 				}
 				//Reset all other endAction to false
@@ -129,17 +126,10 @@ public class Hand {
 
 		while(true) {
 			for (int i = 0; i < activePlayers.size(); i++) {
-				//If it's not preflop and action ends on player break out of loop
-				if (activePlayers.get(tempActionCounter).endAction && streetIn != PRE_FLOP) {
+				//If action ends on player break out of loop
+				if (activePlayers.get(tempActionCounter).endAction) {
 					//Once last to act has acted preflop actions ends (unless pot is raised)
 					if(activePlayers.get(game.dealerIndex).dealerActed){
-						return;
-					}
-				}
-				//If it's preflop and action ends on player check if he is BB (allows BB to still act)
-				else if (activePlayers.get(tempActionCounter).endAction && streetIn == PRE_FLOP) {
-					//Once BB has acted preflop actions ends (unless pot is raised)
-					if(activePlayers.get(game.bbIndex).BBActed){
 						return;
 					}
 				}
@@ -150,21 +140,8 @@ public class Hand {
 				//TempBet is used to gauge whether player action was a bet, call, or check/fold (see end of method)
 				tempBet = currentBet;
 
-				//!!! Consolidate BBActed and dealerActed into just dealerActed
-				//Set hasBBActed to true the first time BB has acted (only during preflop)
-				if(tempActionCounter == game.bbIndex && streetIn == PRE_FLOP){
-					activePlayers.get(game.bbIndex).hasBBActed(true);
-					//Arbitrarily set next player to act as endAction (allows BB to act)
-					if(tempActionCounter == activePlayers.size()-1){
-						activePlayers.get(0).setEndAction(true);
-					}
-					else{
-						activePlayers.get(tempActionCounter+1).setEndAction(true);
-					}
-					//If BB bets then action is reset (occurs in if statement below)
-				}
 				//Set hasDealerActed to true the first time dealer has acted
-				else if(tempActionCounter == game.dealerIndex && streetIn != PRE_FLOP){
+				if(tempActionCounter == game.dealerIndex){
 					activePlayers.get(game.dealerIndex).hasDealerActed(true);
 					//Arbitrarily set next player to act as endAction (allows dealer to act)
 					if(tempActionCounter == activePlayers.size()-1){
@@ -173,7 +150,7 @@ public class Hand {
 					else{
 						activePlayers.get(tempActionCounter+1).setEndAction(true);
 					}
-					//If dealer bets then action is reset (occurs in if statement below)
+					//If dealer bets then action is reset (occurs in bet if statement below)
 				}
 
 				//Bet - sets where action ends
@@ -191,38 +168,41 @@ public class Hand {
 					}
 				}
 				//Call - doesn't affect where action ends
-				else if (playerBet <= currentBet && playerBet != 0){
-					currentBet = playerBet;
-					this.addToPot(currentBet);
+				else if (playerBet != 0){
+					this.addToPot(playerBet);
 				}
 
-				//Remove players from arraylist as they fold
 				if (activePlayers.get(tempActionCounter).playerFolded()) {
-					//Change action index if it's starts on a deleted player
-					if(tempActionCounter == game.actionIndex) {
-						//If action index is on player 0 then the last player gets the action index
-						if(game.actionIndex == 0) {
-							game.actionIndex = activePlayers.size();
-						}
-						//Otherwise shift action index back by 1
-						else{
-							game.actionIndex -= 1;
-						}
-					}
+					//Remove players from arraylist as they fold
 					activePlayers.remove(activePlayers.get(tempActionCounter));
+					//Reset dealer index (one less player) if player removed is before dealer index
+					if(tempActionCounter < game.dealerIndex) {
+						game.dealerIndex -= 1;
+					}
+					//Check if dealer is removed
+					else if(tempActionCounter == game.dealerIndex) {
+						if(game.dealerIndex == activePlayers.size()){
+							game.dealerIndex = 0;
+							activePlayers.get(0).hasDealerActed(true);
+						}
+						else{activePlayers.get(game.dealerIndex).hasDealerActed(true);}
+					}
+					//If tempActionCounter is the last player then reset to 0
+					if(tempActionCounter == activePlayers.size()) {
+						tempActionCounter = 0;
+					}
+				}
+				//Cycle through whose turn it is (different from how many players)
+				else if (tempActionCounter == activePlayers.size()-1) {
+					tempActionCounter = 0;
+				} else {
+					tempActionCounter++;
 				}
 
 				//End while loop when only one player remains
 				if (activePlayers.size() == 1) {
 					activePlayers.get(0).winPot(pot);
 					return;
-				}
-
-				//Cycle through whose turn it is (different from how many players)
-				if (tempActionCounter == activePlayers.size()-1) {
-					tempActionCounter = 0;
-				} else {
-					tempActionCounter++;
 				}
 
 				//If currentBet > tempBet then a bet has been made (as opposed to a check/call), and the for loop is broken
@@ -236,18 +216,23 @@ public class Hand {
 	
 	
 	private void startPreFlop(PokerGame game) {
-		//Post sb and set how much sb
+		//Post sb and set how much sb has bet
 		activePlayers.get(game.sbIndex).postSB();
 		activePlayers.get(game.sbIndex).setStreetMoney(PokerGame.SMALL_BLIND);
-
+		//Post bb and set how much sb has bet
 		activePlayers.get(game.bbIndex).postBB();
 		activePlayers.get(game.bbIndex).setStreetMoney(PokerGame.BIG_BLIND);
+		//Set BB as last to act preflop and reset BBAction
 		activePlayers.get(game.bbIndex).setEndAction(true);
-		activePlayers.get(game.bbIndex).hasBBActed(false);
+		//Set dealer as BB (only for preflop)
+		game.dealerIndex = game.bbIndex;
+		//Note for preflop that last to act is the BB (not the dealer)
+		activePlayers.get(game.bbIndex).hasDealerActed(false);
 
 		this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 
-		startStreet(game, PRE_FLOP);
+		startStreet(game, PRE_FLOP, game.actionIndex);
+		//Only moves to flop if there are still people in pot
 		if(activePlayers.size()!=1){
 			startFlop(game);
 		}
@@ -258,15 +243,19 @@ public class Hand {
 		//Flip order of who acts postflop (headsup)
 		if(game.totalPlayers==2){
 			if(game.actionIndex == 0){
-				game.actionIndex = 1;
+				startingIndex = 1;
 			}
 			else{
-				game.actionIndex = 0;
+				startingIndex = 0;
 			}
 		}
+		else{
+			//If not headsup first player in array
+			startingIndex = 0;
+		}
 
-		startStreet(game, FLOP);
-
+		startStreet(game, FLOP, startingIndex);
+		//Only moves to turn if there are still people in pot
 		if(activePlayers.size()!=1){
 			startTurn(game);
 		}
@@ -275,8 +264,8 @@ public class Hand {
 
 	private void startTurn(PokerGame game){
 
-		startStreet(game, TURN);
-
+		startStreet(game, TURN, startingIndex);
+		//Only moves to river if there are still people in pot
 		if(activePlayers.size()!=1){
 			startRiver(game);
 		}
@@ -285,33 +274,7 @@ public class Hand {
 
 	private void startRiver(PokerGame game){
 
-		startStreet(game, RIVER);
-
-		//Change action index for next hand (doesn't change for headsup since we already flipped on the flop)
-		if(game.totalPlayers != 2){
-			if(game.actionIndex == game.totalPlayers-1){
-				game.actionIndex = 0;
-			}
-			else{
-				game.actionIndex += 1;
-			}
-		}
-
-		//Change sb index for next hand
-		if(game.sbIndex == game.totalPlayers-1){
-			game.sbIndex = 0;
-		}
-		else{
-			game.sbIndex += 1;
-		}
-
-		//Change bb index for next hand
-		if(game.bbIndex == game.totalPlayers-1){
-			game.bbIndex = 0;
-		}
-		else{
-			game.bbIndex += 1;
-		}
+		startStreet(game, RIVER, startingIndex);
 
 	}
 
