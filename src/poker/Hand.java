@@ -219,12 +219,15 @@ public class Hand {
 		//Post sb and set how much sb has bet
 		activePlayers.get(game.sbIndex).postSB();
 		activePlayers.get(game.sbIndex).setStreetMoney(PokerGame.SMALL_BLIND);
+		
 		//Post bb and set how much sb has bet
 		activePlayers.get(game.bbIndex).postBB();
 		activePlayers.get(game.bbIndex).setStreetMoney(PokerGame.BIG_BLIND);
+		
 		//Set BB as last to act preflop and reset BBAction
 		activePlayers.get(game.bbIndex).setEndAction(true);
 		//Set dealer as BB (only for preflop)
+		//??? 
 		game.dealerIndex = game.bbIndex;
 		//Note for preflop that last to act is the BB (not the dealer)
 		activePlayers.get(game.bbIndex).hasDealerActed(false);

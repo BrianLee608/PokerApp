@@ -32,7 +32,7 @@ public class PokerGame {
 		
 		totalPlayers = numOfPlayers;
 
-		handNumber = 0; //used to index the 
+		handNumber = 0; 
 		sbIndex = 0;
 		bbIndex = 1;
 		//Action starts on UTG
@@ -89,10 +89,10 @@ public class PokerGame {
 	private void changeIndex(){
 		//Change action index for next hand (doesn't change for headsup since we already flipped on the flop)
 		if(totalPlayers != 2){
-			if(actionIndex == totalPlayers-1){
+			if(actionIndex == totalPlayers-1){ //if action was at end of array?
 				actionIndex = 0;
 			}
-			else{
+			else {
 				actionIndex += 1;
 			}
 		}
