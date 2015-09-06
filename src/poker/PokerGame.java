@@ -19,10 +19,11 @@ public class PokerGame {
 	public int sbIndex;
 	public int bbIndex;
 	public int actionIndex;
+	public int dealerIndex;
 	public Player [] players;
 	public Card [] board;
 	public ArrayList<Hand> hand;
-	public int dealerIndex;
+	
 	
 	//Instantiate this when a fresh new game starts
 	public PokerGame(int numOfPlayers) {
@@ -56,7 +57,7 @@ public class PokerGame {
 		players = new Player[numOfPlayers];
 		for (int i = 0; i < numOfPlayers; i++) {
 			//assign random position to each player
-			int pos = posAssign.get(i);
+			//int pos = posAssign.get(i);
 			//Assigning random positions makes it difficult to access the right correct player based on position using an arraylist
 			players[i] = new Player("Player " + i, STARTING_CASH, i);
 		}
@@ -67,7 +68,7 @@ public class PokerGame {
 			actionIndex = 0;
 			dealerIndex = 1;
 		}
-		else{
+		else { //if numOfPlayers > 2 
 			//Action index is after BB
 			actionIndex = 2;
 			dealerIndex = players.length - 1;
@@ -89,42 +90,22 @@ public class PokerGame {
 			//After every hand change indexes
 			this.changeIndex();
 		}
-
-		
+	
 	}
 
 	private void changeIndex(){
 		//Change action index for next hand
-		if(actionIndex == totalPlayers-1){ //if action was at end of array?
-			actionIndex = 0;
-		}
-		else {
-			actionIndex += 1;
-		}
-
+		actionIndex = (actionIndex == totalPlayers-1)? 0 : actionIndex+1;
+		
 		//Change sb index for next hand
-		if(sbIndex == totalPlayers-1){
-			sbIndex = 0;
-		}
-		else{
-			sbIndex += 1;
-		}
+		sbIndex = (sbIndex == totalPlayers-1)? 0 : sbIndex+1;
 
 		//Change bb index for next hand
-		if(bbIndex == totalPlayers-1){
-			bbIndex = 0;
-		}
-		else{
-			bbIndex += 1;
-		}
+		bbIndex = (bbIndex == totalPlayers-1)? 0 : bbIndex+1;
 
 		//Change dealer index for next hand
-		if(dealerIndex == totalPlayers-1){
-			dealerIndex = 0;
-		}
-		else{
-			dealerIndex += 1;
-		}
+		dealerIndex = (dealerIndex == totalPlayers-1)? 0 : dealerIndex+1;
+		
 	}
 
 }

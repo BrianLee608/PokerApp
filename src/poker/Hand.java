@@ -83,6 +83,7 @@ public class Hand {
 	}
 	
 	private void startStreet(PokerGame game, int streetIn, int startingIndex) {
+		
 		//Output board
 		printBoard(streetIn, game.handNumber);
 		//initialize currentBet according to street. 
@@ -90,7 +91,8 @@ public class Hand {
 		int tempBet;
 		int tempActionCounter = startingIndex;
 
-		//Reset how much each player has bet on a particular street, and set endAction to last player (skip if preflop)
+		//Reset how much each player has bet on a particular street, and 
+		//set endAction to last player (skip if preflop)
 		for (int j = 0; j < game.players.length; j++) {
 			//Reset all other endAction to false
 			game.players[j].setEndAction(false);
@@ -103,7 +105,8 @@ public class Hand {
 				//Print out pot and allow player to act
 				System.out.println("pot: " + pot);
 				int playerBet = game.players[tempActionCounter].act(currentBet);
-				//TempBet is used to gauge whether player action was a bet, call, or check/fold (see end of method)
+				//TempBet is used to gauge whether player action was a 
+				//bet, call, or check/fold (see end of method)
 				tempBet = currentBet;
 
 				//Constantly update who's folded
@@ -116,7 +119,8 @@ public class Hand {
 
 				//Bet - sets where action ends
 				if (playerBet > currentBet) {
-					currentBet = playerBet;
+					//update the current bet if someone bet larger
+					currentBet = playerBet; 
 					this.addToPot(currentBet);
 					//Set whoever bets as end of action (sets everyone else to false)
 					for (int k = 0; k < game.players.length; k++) {
@@ -152,7 +156,8 @@ public class Hand {
 					tempActionCounter++;
 				}
 
-				//If currentBet > tempBet then a bet has been made (as opposed to a check/call), and the for loop is broken
+				//If currentBet > tempBet then a bet has been made 
+				//(as opposed to a check/call), and the for loop is broken
 				if(currentBet > tempBet){
 					break;
 				}
@@ -163,10 +168,11 @@ public class Hand {
 	
 	
 	private void startPreFlop(PokerGame game) {
+		
 		//Post sb and set how much sb has bet
-
 		game.players[game.sbIndex].postSB();
 		game.players[game.sbIndex].setStreetMoney(PokerGame.SMALL_BLIND);
+		
 		//Post bb and set how much bb has bet
 		game.players[game.bbIndex].postBB();
 		game.players[game.bbIndex].setStreetMoney(PokerGame.BIG_BLIND);
@@ -221,6 +227,17 @@ public class Hand {
 	private void startRiver(PokerGame game){
 
 		startStreet(game, RIVER, startingIndex);
+	
+		//Only need to evaluate final hand strengths if by the time action
+		//is over during the river, there is more than 1 player remaining
+		if (activePlayers.size() > 1) {
+		Player winner;
+		winner = HandEvaluator.evaluateHands((Player[]) activePlayers.toArray(), board);
+		winner.winPot(pot);
+		}
+		
+			
+		 
 
 	}
 

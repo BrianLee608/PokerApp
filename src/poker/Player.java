@@ -129,7 +129,7 @@ public class Player {
 							}
 							break;
 						}
-						catch(Exception e) {
+						catch(java.util.InputMismatchException e) {
 							System.out.print("Not a number\n");
 							in.next();
 							continue;
@@ -158,6 +158,7 @@ public class Player {
 				else if(action.equalsIgnoreCase("Fold")) {
 					this.fold();
 					isCorrect = true;
+					
 					betSize = 0;
 				}
 				else {
