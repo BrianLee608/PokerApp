@@ -26,6 +26,7 @@ public class myTests {
 	@Test 
 	public void testBasicCard() {
 		
+		
 		Card aceHeart = new Card(Rank.ACE, Suit.Hearts);
 		Card aceHeartCopy = new Card(aceHeart);
 		Card aceClub = new Card(Rank.ACE, Suit.Clubs);
