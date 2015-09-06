@@ -138,13 +138,13 @@ public class Player {
 					}
 				}
 				else if(action.equalsIgnoreCase("Call")) {
-					if(minimumBet == 0){
+					if(minimumBet == 0 || minimumBet - streetMoney == 0){
 						System.out.print("You cannot call when there is no bet\n");
 					}
 					else{
-						this.spendMoney(betSize - streetMoney);
+						this.spendMoney(minimumBet - streetMoney);
 						isCorrect = true;
-						betSize = minimumBet - streetMoney;
+						betSize = minimumBet;
 					}
 				}
 				else if(action.equalsIgnoreCase("Fold")) {

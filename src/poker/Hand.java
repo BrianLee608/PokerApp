@@ -95,7 +95,7 @@ public class Hand {
 		int tempActionCounter = game.actionIndex;
 
 		//Reset how much each player has bet on a particular street, and set endAction to last player (skip if preflop)
-		if(streetIn != 9){
+		if(streetIn != PRE_FLOP){
 			for (int j = 0; j < activePlayers.size(); j++) {
 				//Reset money
 				activePlayers.get(j).resetStreetMoney();
