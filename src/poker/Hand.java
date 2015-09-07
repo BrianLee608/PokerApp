@@ -1,11 +1,12 @@
 package poker;
 
+import javax.swing.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class Hand {
-	
+public class Hand implements Serializable {
 	
 	private static final int NUMBER_OF_SHUFFLES = 3;
 	private static final int PRE_FLOP = 9;
@@ -25,7 +26,6 @@ public class Hand {
 	//will be pre-loaded in this constructor. They will become visible accordingly
 	//as action proceeds.
 	public Hand(PokerGame game) {
-
 		//copy over players from the game class as a shallow copy
 		//so we can remove players that folded
 		activePlayers = new ArrayList<Player>(Arrays.asList(game.players));
@@ -113,7 +113,7 @@ public class Hand {
 				removePlayers(game);
 				//End while loop when only one player remains
 				if (activePlayers.size() == 1) {
-					activePlayers.get(0).winPot(pot);
+					game.players[activePlayers.get(0).id].winPot(pot);
 					return;
 				}
 
@@ -233,11 +233,9 @@ public class Hand {
 		if (activePlayers.size() > 1) {
 		Player winner;
 		winner = HandEvaluator.evaluateHands((Player[]) activePlayers.toArray(), board);
+		//Players will need to be updated in game class
 		winner.winPot(pot);
 		}
-		
-			
-		 
 
 	}
 

@@ -2,10 +2,11 @@
 
 package poker;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class Player {
+public class Player implements Serializable {
 
 	private final String name;
 	private int money;
@@ -16,14 +17,16 @@ public class Player {
 	private boolean folded;
 	public int streetMoney;
 	public boolean endAction;
+	public int id;
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
 
-	public Player(String name, int money, int position) {
+	public Player(String name, int money, int position, int id) {
 		
 		this.name = name;
 		this.money = money;
 		this.position = position;
+		this.id = id;
 		DEALER = (position == 0) ? true : false;
 		holeCards = new Card[2];
 		turnToAct = false;

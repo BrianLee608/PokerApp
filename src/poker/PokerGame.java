@@ -3,8 +3,10 @@
 
 package poker;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.*;
 
-public class PokerGame {
+public class PokerGame implements Serializable {
 
 	//Constants
 	public static final int STARTING_CASH = 200;
@@ -38,6 +40,7 @@ public class PokerGame {
 		bbIndex = 1;
 		//Action starts on UTG
 		actionIndex = 2;
+		Scanner in = new Scanner(System.in);
 
 		//the arraylist posAssign will contain numOfPlayer integers
 		//which are shuffled and distributed to each player to give
@@ -58,8 +61,10 @@ public class PokerGame {
 		for (int i = 0; i < numOfPlayers; i++) {
 			//assign random position to each player
 			//int pos = posAssign.get(i);
-			//Assigning random positions makes it difficult to access the right correct player based on position using an arraylist
-			players[i] = new Player("Player " + i, STARTING_CASH, i);
+			System.out.print("Enter player " + i + " name: ");
+			String name = in.nextLine();
+			//Assigning random positions makes it difficult to access the  correct player based on position using an arraylist
+			players[i] = new Player(name, STARTING_CASH, i, i);
 		}
 
 		//initialize where dealer and action is (preflop)
@@ -89,6 +94,7 @@ public class PokerGame {
 			handNumber++;
 			//After every hand change indexes
 			this.changeIndex();
+			saveGame();
 		}
 	
 	}
@@ -106,6 +112,24 @@ public class PokerGame {
 		//Change dealer index for next hand
 		dealerIndex = (dealerIndex == totalPlayers-1)? 0 : dealerIndex+1;
 		
+	}
+
+	private void saveGame() {
+		Scanner in = new Scanner(System.in);
+		System.out.print("Save Game: ");
+		String saveAnswer = in.nextLine().toLowerCase();
+		if(saveAnswer.startsWith("y")){
+			try
+			{
+				System.out.print("Input file name: ");
+				String fileName = in.nextLine();
+				FileOutputStream fileOut = new FileOutputStream("/tmp/" + fileName + ".ser");
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(this);
+				out.close();
+				fileOut.close();
+			}catch(IOException i) {}
+		}
 	}
 
 }
