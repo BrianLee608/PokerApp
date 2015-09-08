@@ -10,7 +10,7 @@ public class GameDriver {
 	public static void main(String[] args) {
 
 		PokerGame pokerGame;
-		StartWindow myStartWindow = new StartWindow();
+//		StartWindow myStartWindow = new StartWindow();
 		Scanner in = new Scanner(System.in);
 		int players;
 		String loadAnswer;

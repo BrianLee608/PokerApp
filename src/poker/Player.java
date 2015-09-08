@@ -128,6 +128,7 @@ public class Player implements Serializable {
 								betSize = minimumBet;
 							} else {
 								this.spendMoney(betSize);
+								streetMoney = betSize;
 								isCorrect = true;
 							}
 							break;
@@ -161,7 +162,6 @@ public class Player implements Serializable {
 				else if(action.equalsIgnoreCase("Fold")) {
 					this.fold();
 					isCorrect = true;
-					
 					betSize = 0;
 				}
 				else {

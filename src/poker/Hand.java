@@ -93,11 +93,13 @@ public class Hand implements Serializable {
 
 		//Reset how much each player has bet on a particular street, and 
 		//set endAction to last player (skip if preflop)
-		for (int j = 0; j < game.players.length; j++) {
-			//Reset all other endAction to false
-			game.players[j].setEndAction(false);
+		if(streetIn != PRE_FLOP){
+			for (int j = 0; j < game.players.length; j++) {
+				//Reset all other endAction to false
+				game.players[j].resetStreetMoney();
+				game.players[j].setEndAction(false);
+			}
 		}
-		//Starting index is changed based on whether it's preflop or postflop
 		game.players[startingIndex].setEndAction(true);
 
 		while(true) {
