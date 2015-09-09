@@ -10,7 +10,7 @@ public class Player implements Serializable {
 
 	private final String name;
 	private int money;
-	private Card [] holeCards;
+	public Card [] holeCards;
 	private int position;
 	private boolean DEALER;
 	private boolean turnToAct;

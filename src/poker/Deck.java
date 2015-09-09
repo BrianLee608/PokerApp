@@ -1,6 +1,8 @@
 package poker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class Deck {
@@ -125,6 +127,15 @@ public class Deck {
 		}
 		
 		return this.getNumCards() == o.getNumCards();
+	}
+	
+	public static void sort(ArrayList <Card> cardsIn) {
+		
+		Collections.sort(cardsIn);
+		//ArrayList<Card> sortedCards = new ArrayList<Card>(Arrays.asList(cardsIn));
+		//Arrays.sort(cardsIn);
+		
+		
 	}
 	
 }

@@ -8,7 +8,7 @@ package poker;
 
 import java.io.Serializable;
 
-public class Card implements Serializable {
+public class Card implements Comparable<Card>, Serializable {
 
 	private final Suit suit;    
 	private final Rank rank;
@@ -42,6 +42,13 @@ public class Card implements Serializable {
 		
 	}
 	
+	
+	public int compareTo(Card other) {
+		
+		return this.rank.compareTo(other.rank);
+		
+	}
+	
 	public boolean equals(Object o) {
 		
 		if (!(o instanceof Card)) {
@@ -52,5 +59,8 @@ public class Card implements Serializable {
 		return rank.equals(c.rank) && suit.equals(c.suit);
 		
 	}
+	
+	
+
 
 }
