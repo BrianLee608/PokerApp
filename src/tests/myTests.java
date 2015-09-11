@@ -196,10 +196,43 @@ public class myTests {
 
 		tempPlayers[0].receiveHand(tempPlayerCards1);
 		tempPlayers[1].receiveHand(tempPlayerCards2);
-		System.out.println(Arrays.toString(tempPlayers));
 
 		HandEvaluator.evaluateHands(tempPlayers, tempBoard);
 
 	}
+
+	@Test
+	public void testStraight() {
+
+		Card aceHeart = new Card(Rank.ACE, Suit.Hearts);
+		Card aceDiamond = new Card(Rank.ACE, Suit.Diamonds);
+		Card aceClub = new Card(Rank.ACE, Suit.Clubs);
+		Card aceSpade = new Card(Rank.ACE, Suit.Spades);
+
+		Card sevenHeart = new Card(Rank.SEVEN, Suit.Hearts);
+		Card sevenClubs = new Card(Rank.SEVEN, Suit.Clubs);
+		Card sevenSpade = new Card(Rank.SEVEN, Suit.Spades);
+		Card deuceSpade = new Card(Rank.DEUCE, Suit.Spades);
+		Card tenDiamond = new Card(Rank.TEN,Suit.Diamonds);
+		Card fourSpade = new Card(Rank.FOUR, Suit.Spades);
+		Card fiveSpade = new Card(Rank.FIVE, Suit.Spades);
+
+		Card sixClubs = new Card(Rank.SIX, Suit.Clubs);
+		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
+		Card threeHeart = new Card(Rank.THREE, Suit.Hearts);
+		Card threeSpade = new Card(Rank.THREE, Suit.Spades);
+		Card threeClub = new Card(Rank.THREE, Suit.Clubs);
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
+				sixClubs, threeDiamond, deuceSpade, sevenClubs, fourSpade, fiveSpade));
+
+		//Sort by rank, then sort by suit
+		HandEvaluator.sort(temp);
+		
+		System.out.println(Arrays.toString(HandEvaluator.hasStraight(temp)));
+
+	}
+	
+	
 
 }

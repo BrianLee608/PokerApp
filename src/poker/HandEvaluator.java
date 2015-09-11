@@ -30,8 +30,10 @@ public class HandEvaluator {
 	//will be made
 	public static Player evaluateHands(Player[] players, Card[] board) {
 
+		//playerStrengths represents the numbering system for each player
 		int[][] playerStrengths = new int[players.length][5];
 
+		//initialize with all 5 cards of the board
 		Card[] allCards = new Card[7];
 		allCards[0] = board[0];
 		allCards[1] = board[1];
@@ -39,19 +41,20 @@ public class HandEvaluator {
 		allCards[3] = board[3];
 		allCards[4] = board[4];
 
-
+		
 		for (int i = 0; i < players.length; i++) {
 
+			//unique for each player
 			allCards[5] = players[i].holeCards[0];
 			allCards[6] = players[i].holeCards[1];
 
 			ArrayList<Card> allCardz = new ArrayList<Card>(Arrays.asList(allCards));
 
 			sort(allCardz);
-			System.out.println(allCardz);
 
+			//playerStrengths[i] is player[i]'s strength
 			playerStrengths[i] = determineStrength(allCardz);
-			System.out.println(Arrays.toString(playerStrengths[i]));
+			
 			}
 		
 		return players[determineWinner(playerStrengths)];
@@ -173,6 +176,8 @@ public class HandEvaluator {
 		//Store temporary arraylist of cards
 		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
 
+		//sort.suit 
+		sortSuit(tempCards);
 		int flushCounter = 0;
 		int flushValue = 0;
 		//Same method as fullhouse, starts from end (highest flush)
@@ -200,13 +205,83 @@ public class HandEvaluator {
 			return retVal;
 		}
 	}
-//
-//	public static int hasStraight(Card[] cards) {
-//
-//		return false;
-//
-//	}
-//
+
+	//pre-condition: cards are numerically sorted
+	public static int[] hasStraight(ArrayList<Card> cards) {
+
+		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
+
+
+		int straightCounter = 0;
+		int straightValue = 0;
+		for (int i = tempCards.size()-1; i > 0; i--) {
+
+			if (straightCounter == 4) {
+				straightValue = tempCards.get(i+4).getRank().getNumeral();
+				break;
+			}
+
+			if (tempCards.get(i).getRank().getNumeral() - 
+					tempCards.get(i-1).getRank().getNumeral() == 1) {
+
+				straightCounter++;
+			} else {
+				continue;
+			}
+		}
+
+		//if you don't have a straight (other than A,2,3,4,5) {
+		if (straightCounter != 4) {
+
+			int AceStraightCounter = 0;
+			for (int i = 0; i < tempCards.size(); i++) {
+				switch(AceStraightCounter){
+				case 0: //DEUCE
+				if (tempCards.get(i).getRank().getNumeral() == 2) {
+					AceStraightCounter++;
+				}
+				break; //THREE
+				case 1: 
+					if (tempCards.get(i).getRank().getNumeral() == 3) {
+						AceStraightCounter++;
+					}
+					break;
+				case 2:  //FOUR
+					if (tempCards.get(i).getRank().getNumeral() == 4) {
+						AceStraightCounter++;
+					}
+					break;
+				case 3: //FIVE
+					if (tempCards.get(i).getRank().getNumeral() == 5) {
+						AceStraightCounter++;
+					}
+					break;	
+				case 4:  //ACE
+					if (tempCards.get(i).getRank().getNumeral() == 14) {
+						AceStraightCounter++;
+					}
+					straightValue = 5;
+					break;
+				}
+			}
+		}
+		
+		
+
+		int[] retVal = new int[5];
+		if (straightValue != 0) {
+			retVal[0] = 18;
+			retVal[1] = straightValue;
+			System.out.println(retVal);
+			return retVal;
+		} 
+
+		return retVal;
+
+
+	}
+	
+
 //	public static int hasThreeOfAKind(Card[] cards) {
 //
 //		return false;
@@ -228,14 +303,14 @@ public class HandEvaluator {
 	public static int[] determineStrength(ArrayList<Card> cards) {
 
 		if (hasFourOfAKind(cards)[0] == QUAD) {
-			System.out.println("a");
 			return hasFourOfAKind(cards);
 		} else if (hasFullHouse(cards)[0] == FULLHOUSE){
 			return hasFullHouse(cards);
 		} else if (hasFlush(cards)[0] == FLUSH){
 			return hasFlush(cards);
-		}
-		else{
+		} else if (hasStraight(cards)[0] == STRAIGHT) {
+			return hasStraight(cards);
+		} else{
 			int[] retVal = new int [5];
 			return retVal;
 		}
