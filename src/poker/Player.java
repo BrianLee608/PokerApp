@@ -45,7 +45,6 @@ public class Player implements Serializable {
 		
 		holeCards[0] = hand[0];
 		holeCards[1] = hand[1];
-		
 		folded = false;
 		
 	}

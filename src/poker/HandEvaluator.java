@@ -3,6 +3,7 @@ package poker;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 //Hand strength will be stored in an Integerarray of size 5.
 // index 0 = strength rank
@@ -29,24 +30,27 @@ public class HandEvaluator {
 	//will be made
 	public static Player evaluateHands(Player[] players, Card[] board) {
 
-		int[] playerStrengths = new int[players.length];
-		
+		int[][] playerStrengths = new int[players.length][1];
+
 		ArrayList <Card> allCards = new ArrayList <Card> ();
 		for (int i = 0; i < players.length; i++) {
 			
 			allCards.addAll(Arrays.asList(players[i].holeCards[0], players[i].holeCards[1],
 					board[0], board[1], board[2], board[3], board[4]));
+			System.out.println(allCards);
+			sort(allCards);
+			System.out.println(allCards);
 
-			//playerStrengths[i] = determineStrength(allCards);
+			playerStrengths[i] = determineStrength(allCards);
+			System.out.println(Arrays.toString(playerStrengths[i]));
 			}
 		
-		
-		
+
 		return players[determineWinner(playerStrengths)];
 
 	}
 
-	private static int determineWinner(int[] playerStrengths) {
+	private static int determineWinner(int[][] playerStrengths) {
 		return 0;
 	}
 
@@ -58,7 +62,6 @@ public class HandEvaluator {
 
 	//the passed in cards must be sorted
 	public static int[] hasFourOfAKind(ArrayList<Card> cards) {
-
 		int quadCounter = 0;
 		int quadValue = 0;
 		int kickerValue = 0;
@@ -201,23 +204,32 @@ public class HandEvaluator {
 //
 //	}
 //
-//	public static int[] determineStrength(ArrayList<Card> cards) {
-//
-//
-//		if (hasFourOfAKind(cards)[0] == QUAD) {
-//			return hasFourOfAKind(cards);
-//		} else { //if high card
-//			return hasHighCard(cards);
-//		}
-//
-//
-//
-//	}
+	public static int[] determineStrength(ArrayList<Card> cards) {
 
+		if (hasFourOfAKind(cards)[0] == QUAD) {
+			return hasFourOfAKind(cards);
+		} else if (hasFullHouse(cards)[0] == FULLHOUSE){
+			return hasFullHouse(cards);
+		} else if (hasFlush(cards)[0] == FLUSH){
+		return hasFlush(cards);
+		}
+		else{
+			int[] retVal = new int [5];
+			return retVal;
+		}
 
+	}
 
-	
-	
-	
-	
+	public static void sort(ArrayList <Card> cardsIn) {
+
+		Collections.sort(cardsIn);
+
+	}
+
+	public static void sortSuit(ArrayList <Card> cardsIn) {
+
+		Collections.sort(cardsIn, new SuitCompare());
+
+	}
+
 }

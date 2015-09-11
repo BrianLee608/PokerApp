@@ -87,18 +87,18 @@ public class myTests {
 		
 		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(aceHeart, 
 				aceDiamond, aceClub, aceSpade, deuceSpade, sevenHeart, tenDiamond));
-			
-			
-		
-	
-		Deck.sort(temp);
+
+
+
+
+		HandEvaluator.sort(temp);
 //		System.out.println(temp);
 //
 //		System.out.println(Arrays.toString(HandEvaluator.hasFourOfAKind(temp)));
 //
 //		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(aceHeart,
 //				aceDiamond, threeDiamond, threeSpade, tenDiamond, sixClubs, threeHeart));
-//		Deck.sort(temp2);
+//		HandEvaluator.sort(temp2);
 //
 //		System.out.println(Arrays.toString(HandEvaluator.hasFourOfAKind(temp2)));
 
@@ -127,7 +127,7 @@ public class myTests {
 		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
 				threeClub, threeDiamond, threeHeart, threeSpade, sevenHeart, sevenClubs));
 
-		Deck.sort(temp);
+		HandEvaluator.sort(temp);
 //		System.out.println(Arrays.toString(HandEvaluator.hasFullHouse(temp)));
 
 	}
@@ -158,9 +158,48 @@ public class myTests {
 				threeClub, threeDiamond, threeHeart, threeSpade, fourSpade, fiveSpade));
 
 		//Sort by rank, then sort by suit
-		Deck.sort(temp);
-		Deck.sortSuit(temp);
-		System.out.println(Arrays.toString(HandEvaluator.hasFlush(temp)));
+		HandEvaluator.sort(temp);
+		HandEvaluator.sortSuit(temp);
+//		System.out.println(Arrays.toString(HandEvaluator.hasFlush(temp)));
 
 	}
+
+	@Test
+	public void testHandEvaluator() {
+
+		Card sevenHeart = new Card(Rank.SEVEN, Suit.Hearts);
+		Card sevenClubs = new Card(Rank.SEVEN, Suit.Clubs);
+
+		Card sevenSpade = new Card(Rank.DEUCE, Suit.Clubs);
+		Card deuceSpade = new Card(Rank.DEUCE, Suit.Spades);
+
+		Card tenDiamond = new Card(Rank.SEVEN,Suit.Diamonds);
+		Card fourSpade = new Card(Rank.SEVEN, Suit.Spades);
+		Card fiveSpade = new Card(Rank.DEUCE, Suit.Hearts);
+		Card sixClubs = new Card(Rank.SIX, Suit.Clubs);
+		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
+
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(threeDiamond, sixClubs, tenDiamond, fourSpade, fiveSpade));
+		Card[] tempBoard = temp.toArray(new Card[temp.size()]);
+		Player[] tempPlayers = new Player[2];
+		tempPlayers[0] = new Player("a",200,0,1);
+		tempPlayers[1] = new Player("b",200,1,2);
+
+		Card [] tempPlayerCards1 = new Card[2];
+		tempPlayerCards1[0] = sevenClubs;
+		tempPlayerCards1[1] = sevenHeart;
+
+		Card [] tempPlayerCards2 = new Card[2];
+		tempPlayerCards2[0] = sevenSpade;
+		tempPlayerCards2[1] = deuceSpade;
+
+		tempPlayers[0].receiveHand(tempPlayerCards1);
+		tempPlayers[1].receiveHand(tempPlayerCards2);
+		System.out.println(Arrays.toString(tempPlayers));
+
+		HandEvaluator.evaluateHands(tempPlayers, tempBoard);
+
+	}
+
 }

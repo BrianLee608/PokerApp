@@ -128,17 +128,5 @@ public class Deck {
 		
 		return this.getNumCards() == o.getNumCards();
 	}
-
-	public static void sort(ArrayList <Card> cardsIn) {
-
-		Collections.sort(cardsIn);
-
-	}
-
-	public static void sortSuit(ArrayList <Card> cardsIn) {
-
-		Collections.sort(cardsIn, new SuitCompare());
-
-	}
 	
 }
