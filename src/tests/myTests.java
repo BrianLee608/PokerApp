@@ -56,11 +56,11 @@ public class myTests {
 		
 		Deck deckA = new Deck();
 	
-		System.out.println(deckA);
-
-		
-		deckA.shuffle();
-		System.out.println(deckA);
+//		System.out.println(deckA);
+//
+//
+//		deckA.shuffle();
+//		System.out.println(deckA);
 		
 		
 		
@@ -92,15 +92,75 @@ public class myTests {
 		
 	
 		Deck.sort(temp);
-		System.out.println(temp);
+//		System.out.println(temp);
+//
+//		System.out.println(Arrays.toString(HandEvaluator.hasFourOfAKind(temp)));
+//
+//		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(aceHeart,
+//				aceDiamond, threeDiamond, threeSpade, tenDiamond, sixClubs, threeHeart));
+//		Deck.sort(temp2);
+//
+//		System.out.println(Arrays.toString(HandEvaluator.hasFourOfAKind(temp2)));
 
-		System.out.println(Arrays.toString(HandEvaluator.hasFourOfAKind(temp)));
-		
-		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(aceHeart, 
-				aceDiamond, threeDiamond, threeSpade, tenDiamond, sixClubs, threeHeart));
-		Deck.sort(temp2);
-		
-		System.out.println(Arrays.toString(HandEvaluator.hasFourOfAKind(temp2)));
+	}
+
+	@Test
+	public void testFullHouse() {
+
+		Card aceHeart = new Card(Rank.ACE, Suit.Hearts);
+		Card aceDiamond = new Card(Rank.ACE, Suit.Diamonds);
+		Card aceClub = new Card(Rank.ACE, Suit.Clubs);
+		Card aceSpade = new Card(Rank.ACE, Suit.Spades);
+
+		Card sevenHeart = new Card(Rank.SEVEN, Suit.Hearts);
+		Card sevenClubs = new Card(Rank.SEVEN, Suit.Clubs);
+		Card sevenSpade = new Card(Rank.SEVEN, Suit.Spades);
+		Card deuceSpade = new Card(Rank.DEUCE, Suit.Spades);
+		Card tenDiamond = new Card(Rank.TEN,Suit.Diamonds);
+
+		Card sixClubs = new Card(Rank.SIX, Suit.Clubs);
+		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
+		Card threeHeart = new Card(Rank.THREE, Suit.Hearts);
+		Card threeSpade = new Card(Rank.THREE, Suit.Spades);
+		Card threeClub = new Card(Rank.THREE, Suit.Clubs);
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
+				threeClub, threeDiamond, threeHeart, threeSpade, sevenHeart, sevenClubs));
+
+		Deck.sort(temp);
+//		System.out.println(Arrays.toString(HandEvaluator.hasFullHouse(temp)));
+
+	}
+
+	@Test
+	public void testFlush() {
+
+		Card aceHeart = new Card(Rank.ACE, Suit.Hearts);
+		Card aceDiamond = new Card(Rank.ACE, Suit.Diamonds);
+		Card aceClub = new Card(Rank.ACE, Suit.Clubs);
+		Card aceSpade = new Card(Rank.ACE, Suit.Spades);
+
+		Card sevenHeart = new Card(Rank.SEVEN, Suit.Hearts);
+		Card sevenClubs = new Card(Rank.SEVEN, Suit.Clubs);
+		Card sevenSpade = new Card(Rank.SEVEN, Suit.Spades);
+		Card deuceSpade = new Card(Rank.DEUCE, Suit.Spades);
+		Card tenDiamond = new Card(Rank.TEN,Suit.Diamonds);
+		Card fourSpade = new Card(Rank.FOUR, Suit.Spades);
+		Card fiveSpade = new Card(Rank.FIVE, Suit.Spades);
+
+		Card sixClubs = new Card(Rank.SIX, Suit.Clubs);
+		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
+		Card threeHeart = new Card(Rank.THREE, Suit.Hearts);
+		Card threeSpade = new Card(Rank.THREE, Suit.Spades);
+		Card threeClub = new Card(Rank.THREE, Suit.Clubs);
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
+				threeClub, threeDiamond, threeHeart, threeSpade, fourSpade, fiveSpade));
+
+		//Sort by rank, then sort by suit
+		Deck.sort(temp);
+		Deck.sortSuit(temp);
+		System.out.println(Arrays.toString(HandEvaluator.hasFlush(temp)));
 
 	}
 }
