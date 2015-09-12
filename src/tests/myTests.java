@@ -216,6 +216,8 @@ public class myTests {
 		Card tenDiamond = new Card(Rank.TEN,Suit.Diamonds);
 		Card fourSpade = new Card(Rank.FOUR, Suit.Spades);
 		Card fiveSpade = new Card(Rank.FIVE, Suit.Spades);
+		Card deuceHeart = new Card(Rank.DEUCE, Suit.Hearts);
+		Card fiveHeart = new Card(Rank.FIVE, Suit.Hearts);
 
 		Card sixClubs = new Card(Rank.SIX, Suit.Clubs);
 		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
@@ -229,9 +231,114 @@ public class myTests {
 		//Sort by rank, then sort by suit
 		HandEvaluator.sort(temp);
 		
-		System.out.println(Arrays.toString(HandEvaluator.hasStraight(temp)));
+		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(deuceHeart,
+				threeClub, fourSpade, fiveHeart, sevenClubs, aceClub, fiveSpade));
+		HandEvaluator.sort(temp2);
+		System.out.println("About to test regular flush");
+		System.out.println(temp2);
+		System.out.println(Arrays.toString(HandEvaluator.hasStraight(temp2)));
+
+		
+		
 
 	}
+	
+	
+	@Test
+	public void testTwoPair() {
+
+		Card aceHeart = new Card(Rank.ACE, Suit.Hearts);
+		Card aceDiamond = new Card(Rank.ACE, Suit.Diamonds);
+		Card aceClub = new Card(Rank.ACE, Suit.Clubs);
+		Card aceSpade = new Card(Rank.ACE, Suit.Spades);
+
+		Card sevenHeart = new Card(Rank.SEVEN, Suit.Hearts);
+		Card sevenClubs = new Card(Rank.SEVEN, Suit.Clubs);
+		Card sevenSpade = new Card(Rank.SEVEN, Suit.Spades);
+		Card deuceSpade = new Card(Rank.DEUCE, Suit.Spades);
+		Card tenDiamond = new Card(Rank.TEN,Suit.Diamonds);
+		Card fourSpade = new Card(Rank.FOUR, Suit.Spades);
+		Card fiveSpade = new Card(Rank.FIVE, Suit.Spades);
+
+		Card sixClubs = new Card(Rank.SIX, Suit.Clubs);
+		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
+		Card threeHeart = new Card(Rank.THREE, Suit.Hearts);
+		Card threeSpade = new Card(Rank.THREE, Suit.Spades);
+		Card threeClub = new Card(Rank.THREE, Suit.Clubs);
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
+				sixClubs, sevenHeart, deuceSpade, threeSpade, threeClub, fiveSpade));
+
+		
+		HandEvaluator.sort(temp);
+		
+
+		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(aceClub,
+				aceDiamond, sevenHeart, sevenClubs, threeSpade, threeClub, fiveSpade));
+		
+		HandEvaluator.sort(temp2);
+		//make sure it won't count 3 pair
+		
+	}
+	
+	
+	@Test
+	public void testStraightFlush() {
+
+		Card aceSpade = new Card(Rank.ACE, Suit.Spades);
+		Card aceHeart = new Card(Rank.ACE, Suit.Hearts);
+		Card kingHeart = new Card(Rank.KING, Suit.Hearts);
+		Card queenHeart = new Card(Rank.QUEEN, Suit.Hearts);
+		Card jackHeart = new Card(Rank.JACK, Suit.Hearts);
+		Card tenHeart = new Card(Rank.TEN, Suit.Hearts);
+
+
+		Card sevenHeart = new Card(Rank.SEVEN, Suit.Hearts);
+		Card sevenClubs = new Card(Rank.SEVEN, Suit.Clubs);
+		Card sevenSpade = new Card(Rank.SEVEN, Suit.Spades);
+		Card deuceSpade = new Card(Rank.DEUCE, Suit.Spades);
+		Card tenDiamond = new Card(Rank.TEN,Suit.Diamonds);
+		Card fourSpade = new Card(Rank.FOUR, Suit.Spades);
+		Card fiveSpade = new Card(Rank.FIVE, Suit.Spades);
+
+		Card sixSpade = new Card(Rank.SIX, Suit.Spades);
+		Card threeDiamond = new Card(Rank.THREE, Suit.Diamonds);
+		Card threeHeart = new Card(Rank.THREE, Suit.Hearts);
+		Card threeSpade = new Card(Rank.THREE, Suit.Spades);
+		Card threeClub = new Card(Rank.THREE, Suit.Clubs);
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
+				sixSpade, aceHeart, kingHeart, queenHeart, jackHeart, tenHeart));
+
+		
+		HandEvaluator.sortSuitAndNumeral(temp);
+		
+		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(sevenSpade,
+				sixSpade, fiveSpade, fourSpade, threeSpade, jackHeart, tenHeart));
+		
+		HandEvaluator.sortSuitAndNumeral(temp2);
+		System.out.println(temp2);
+		
+		System.out.println(Arrays.toString(HandEvaluator.hasStraightFlush(temp2)));
+		
+		
+		Card deuceHeart = new Card(Rank.DEUCE, Suit.Hearts);
+		Card threeHeart2 = new Card(Rank.THREE, Suit.Hearts);
+		Card fourHeart = new Card(Rank.FOUR, Suit.Hearts);
+		Card fiveHeart = new Card(Rank.FIVE, Suit.Hearts);
+		Card aceHeart2 = new Card(Rank.ACE, Suit.Hearts);
+		Card jackSpade = new Card(Rank.JACK, Suit.Spades);
+		Card tenSpade = new Card(Rank.TEN, Suit.Spades);
+
+		ArrayList <Card> temp3 = new ArrayList <Card>(Arrays.asList(aceHeart2,
+				deuceHeart, fiveHeart, fourHeart, threeHeart2, jackSpade, tenSpade));
+		HandEvaluator.sortSuitAndNumeral(temp3);
+		System.out.println(temp3);
+		System.out.println(Arrays.toString(HandEvaluator.hasStraightFlush(temp3)));
+
+		
+	}
+	
 	
 	
 

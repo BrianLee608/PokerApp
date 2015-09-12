@@ -65,11 +65,90 @@ public class HandEvaluator {
 		return 0;
 	}
 
-//	public static int hasStraightFlush(Card[] cards) {
-//
-//		return false;
-//
-//	}
+	public static int[] hasStraightFlush(ArrayList<Card> cards) {
+
+		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
+		
+		int straightFlushCounter = 0;
+		int sfValue = 0; //straightflush value
+		//at this point tempCards should be sorted SuitandNumeral-wise
+		for (int i = tempCards.size()-1; i > 0; i--) {
+
+			if (straightFlushCounter == 4) {
+				break;
+			}
+
+			//if card[i] and card[i-1] are 1 apart
+			if (tempCards.get(i).getRank().getNumeral() - 
+					tempCards.get(i-1).getRank().getNumeral() == 1) {
+				//if card[i] and card[i-1] have same suit
+				if (tempCards.get(i).getSuit().getValue().equals(
+						tempCards.get(i-1).getSuit().getValue())) {
+					
+					straightFlushCounter++;
+					
+					if (sfValue == 0) { //set the value of the sf
+						sfValue = tempCards.get(i).getRank().getNumeral();
+					}
+				}
+			} else { //if card[i-1] cannot possibly yield a straight flush
+				sfValue = 0;
+				straightFlushCounter = 0;
+			}
+		}
+
+		//if you don't have a straight (other than A,2,3,4,5) 
+		if (straightFlushCounter != 4) {
+
+			int AceSFCounter = 0;
+			for (int i = 0; i < tempCards.size(); i++) {
+				switch(AceSFCounter){
+				case 0: //DEUCE
+					if (tempCards.get(i).getRank().getNumeral() == 2) {
+						AceSFCounter++;
+					}
+					break; //THREE
+				case 1: 
+					if (tempCards.get(i).getRank().getNumeral() == 3) {
+						AceSFCounter++;
+					}
+					break;
+				case 2:  //FOUR
+					if (tempCards.get(i).getRank().getNumeral() == 4) {
+						AceSFCounter++;
+					}
+					break;
+				case 3: //FIVE
+					if (tempCards.get(i).getRank().getNumeral() == 5) {
+						AceSFCounter++;
+					}
+					break;	
+				case 4:  //ACE
+					if (tempCards.get(i).getRank().getNumeral() == 14) {
+						AceSFCounter++;
+					}
+					sfValue = 5;
+					straightFlushCounter = 4;
+					break;
+				}
+			}
+		}
+
+
+		
+		
+		int[] retVal = new int[5];
+		if (straightFlushCounter == 4) {
+			retVal[0] = STRAIGHTFLUSH;
+			retVal[1] = sfValue;
+			return retVal;
+		}
+		
+		return retVal;
+
+		
+		
+	}
 
 	//the passed in cards must be sorted
 	public static int[] hasFourOfAKind(ArrayList<Card> cards) {
@@ -230,8 +309,10 @@ public class HandEvaluator {
 			}
 		}
 
-		//if you don't have a straight (other than A,2,3,4,5) {
-		if (straightCounter != 4) {
+		//if you don't have a straight (other than A,2,3,4,5) and
+		//cards[0] is a deuce and cards[6] is an ace
+		if (straightCounter != 4 && tempCards.get(0).getRank().getNumeral()==2 
+				&&tempCards.get(6).getRank().getNumeral()==14) {
 
 			int AceStraightCounter = 0;
 			for (int i = 0; i < tempCards.size(); i++) {
@@ -272,7 +353,7 @@ public class HandEvaluator {
 		if (straightValue != 0) {
 			retVal[0] = 18;
 			retVal[1] = straightValue;
-			System.out.println(retVal);
+	
 			return retVal;
 		} 
 
@@ -288,11 +369,69 @@ public class HandEvaluator {
 //
 //	}
 //
-//	public static int hasTwoPair(Card[] cards) {
-//
-//		return false;
-//
-//	}
+	public static int[] hasTwoPair(ArrayList<Card> cards) {
+		
+		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
+
+		int pairCounter = 0; 
+		int higherPair = 0;
+		int lowerPair = 0;
+		int kicker = 0;
+		
+		//iterate backwards until you get to index 1
+		for (int i = tempCards.size()-1; i > 0; i--) {
+
+			
+			if (pairCounter == 2) {
+				if (kicker != 0) { //kicker has already been found
+					break;
+				} else { //kicker has not been set yet (kicker == 0)
+					kicker = tempCards.get(i).getRank().getNumeral();
+					break;
+				}
+			}
+			
+			//if the current card has same numeral as the card before
+			if (tempCards.get(i).getRank().getNumeral() == 
+					tempCards.get(i-1).getRank().getNumeral()) {
+				//i>1 b/c we want to check if the card at i-2 is not 
+				//the same as card i and i-1
+				if (i > 1) { 
+					if (tempCards.get(i-1).getRank().getNumeral() !=
+							tempCards.get(i-2).getRank().getNumeral()) {
+
+						pairCounter++;
+						i--; //eliminate a redundant iteration of the loop
+						
+						if (pairCounter == 1) {
+							higherPair = tempCards.get(i).getRank().getNumeral();
+						} else { //if pairCounter == 2 {
+							lowerPair = tempCards.get(i).getRank().getNumeral();
+						}
+					}
+				} else { //if i == 1
+					pairCounter++;
+					lowerPair = tempCards.get(i).getRank().getNumeral();
+				}
+			} else if (kicker == 0) { //set kicker if one hasn't been found yet
+				kicker = tempCards.get(i).getRank().getNumeral();
+				
+			}
+		}
+		
+		int[] retVal = new int[5];
+		if (pairCounter == 2) {
+			retVal[0] = TWOPAIR;
+			retVal[1] = higherPair;
+			retVal[2] = lowerPair;
+			retVal[3] = kicker;
+			return retVal;
+		}
+		
+		return retVal;
+		
+
+	}
 //
 //	public static int hasOnePair(Card[] cards) {
 //
@@ -327,6 +466,11 @@ public class HandEvaluator {
 
 		Collections.sort(cardsIn, new SuitCompare());
 
+	}
+	
+	public static void sortSuitAndNumeral(ArrayList <Card> cardsIn) {
+		
+		Collections.sort(cardsIn, new SuitAndNumeralCompare());
 	}
 
 }
