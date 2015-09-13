@@ -170,6 +170,11 @@ public class Hand implements Serializable {
 	
 	
 	private void startPreFlop(PokerGame game) {
+
+		for (int j = 0; j < game.players.length; j++) {
+			//Reset streetMoney
+			game.players[j].resetStreetMoney();
+		}
 		
 		//Post sb and set how much sb has bet
 		game.players[game.sbIndex].postSB();
@@ -233,10 +238,19 @@ public class Hand implements Serializable {
 		//Only need to evaluate final hand strengths if by the time action
 		//is over during the river, there is more than 1 player remaining
 		if (activePlayers.size() > 1) {
-		Player winner;
-		winner = HandEvaluator.evaluateHands((Player[]) activePlayers.toArray(), board);
-		//Players will need to be updated in game class
-		winner.winPot(pot);
+		ArrayList<Integer> idList = HandEvaluator.evaluateHands(activePlayers, board);
+			//Single winner
+			if(idList.size()==1){
+				game.players[idList.get(0)].winPot(pot);
+			}
+			//Split pot
+			else{
+				//Requires rounding (not implemented)
+				int splitPot = pot/(idList.size()-1);
+				for(int i = 0; i < idList.size(); i++){
+					game.players[idList.get(i)].winPot(splitPot);
+				}
+			}
 		}
 
 	}

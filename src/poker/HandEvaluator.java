@@ -1,5 +1,6 @@
 package poker;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,10 +29,10 @@ public class HandEvaluator {
 	//Inside this method, a heirarchy of method calls to:
 	//Royal Flush --> Straight Flush --> 4 of a kind ...---> Pair
 	//will be made
-	public static Player evaluateHands(Player[] players, Card[] board) {
+	public static ArrayList<Integer> evaluateHands(ArrayList<Player> players, Card[] board) {
 
 		//playerStrengths represents the numbering system for each player
-		int[][] playerStrengths = new int[players.length][5];
+		int[][] playerStrengths = new int[players.size()][5];
 
 		//initialize with all 5 cards of the board
 		Card[] allCards = new Card[7];
@@ -40,34 +41,74 @@ public class HandEvaluator {
 		allCards[2] = board[2];
 		allCards[3] = board[3];
 		allCards[4] = board[4];
-
 		
-		for (int i = 0; i < players.length; i++) {
+		for (int i = 0; i < players.size(); i++) {
 
 			//unique for each player
-			allCards[5] = players[i].holeCards[0];
-			allCards[6] = players[i].holeCards[1];
+			allCards[5] = players.get(i).holeCards[0];
+			allCards[6] = players.get(i).holeCards[1];
 
 			ArrayList<Card> allCardz = new ArrayList<Card>(Arrays.asList(allCards));
 
 			sort(allCardz);
-
+			System.out.println(allCardz);
 			//playerStrengths[i] is player[i]'s strength
 			playerStrengths[i] = determineStrength(allCardz);
-			
+			System.out.println(Arrays.toString(playerStrengths[i]));
 			}
-		
-		return players[determineWinner(playerStrengths)];
 
+		//
+		ArrayList <Integer> winnerList = determineWinner(playerStrengths);
+		ArrayList <Integer> idList = new ArrayList<Integer>(winnerList.size());
+
+		for(int i = 0; i < winnerList.size(); i++){
+			idList.add(i, players.get(winnerList.get(i)).id);
+		}
+		System.out.println(idList);
+		return idList;
 	}
 
-	private static int determineWinner(int[][] playerStrengths) {
-		return 0;
+	private static ArrayList<Integer> determineWinner(int[][] playerStrengths) {
+		//Allows for ties if players have the same hand
+		ArrayList<Integer> winnerList = new ArrayList<Integer>(playerStrengths.length);
+		int winnerCounter = 0;
+		int playerCounter = 0;
+
+		while(playerCounter < playerStrengths.length-1){
+			playerCounter++;
+			for(int i = 0; i < 5; i++){
+				if(playerStrengths[winnerCounter][i] < playerStrengths[playerCounter][i]){
+					winnerCounter = playerCounter;
+					break;
+				}
+				else if(playerStrengths[winnerCounter][i] > playerStrengths[playerCounter][i]){
+					break;
+				}
+			}
+		}
+		//Add player (array position in playerstrengths) with strongest hand
+		winnerList.add(0,winnerCounter);
+
+		//Position of next player (compare with winner)
+		int nextPlayerCounter = winnerCounter;
+		//How many times we need to loop through (also as arraylist position when adding to winnerlist)
+		int loopCounter = 1;
+		while(loopCounter < playerStrengths.length){
+			//If playercounter is at the end restart to the beginning, otherwise increment
+			nextPlayerCounter = (nextPlayerCounter == playerStrengths.length - 1)? 0 : nextPlayerCounter+1;
+			//If winner and nextplayer are the same, add entry to arraylist
+			if(Arrays.equals(playerStrengths[winnerCounter], playerStrengths[nextPlayerCounter])){
+				winnerList.add(loopCounter, nextPlayerCounter);
+			}
+			loopCounter++;
+		}
+		return winnerList;
 	}
 
 	public static int[] hasStraightFlush(ArrayList<Card> cards) {
 
 		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
+		sortSuitAndNumeral(tempCards);
 		
 		int straightFlushCounter = 0;
 		int sfValue = 0; //straightflush value
@@ -133,9 +174,6 @@ public class HandEvaluator {
 				}
 			}
 		}
-
-
-		
 		
 		int[] retVal = new int[5];
 		if (straightFlushCounter == 4) {
@@ -146,8 +184,6 @@ public class HandEvaluator {
 		
 		return retVal;
 
-		
-		
 	}
 
 	//the passed in cards must be sorted
@@ -179,6 +215,7 @@ public class HandEvaluator {
 				}
 			}
 		}
+
 		int [] retVal = new int [5];
 		if (quadCounter == 3) { //if it is quads {
 			retVal[0] = QUAD;
@@ -254,9 +291,9 @@ public class HandEvaluator {
 	public static int[] hasFlush(ArrayList <Card> cards) {
 		//Store temporary arraylist of cards
 		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
-
-		//sort.suit 
+		//Sort by suit (already pre-sorted by rank)
 		sortSuit(tempCards);
+
 		int flushCounter = 0;
 		int flushValue = 0;
 		//Same method as fullhouse, starts from end (highest flush)
@@ -290,22 +327,21 @@ public class HandEvaluator {
 
 		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
 
-
 		int straightCounter = 0;
 		int straightValue = 0;
 		for (int i = tempCards.size()-1; i > 0; i--) {
-
-			if (straightCounter == 4) {
-				straightValue = tempCards.get(i+4).getRank().getNumeral();
-				break;
-			}
-
-			if (tempCards.get(i).getRank().getNumeral() - 
-					tempCards.get(i-1).getRank().getNumeral() == 1) {
-
+			if (tempCards.get(i).getRank().getNumeral() - tempCards.get(i-1).getRank().getNumeral() == 1) {
 				straightCounter++;
-			} else {
-				continue;
+				//Must be inside of if statement in order to get value of straight
+				if (straightCounter == 4) {
+					straightValue = tempCards.get(i+3).getRank().getNumeral();
+					break;
+				}
+				else{
+					//Reset straightcounter (otherwise 3456TKA would be a straight)
+					straightCounter = 0;
+					continue;
+				}
 			}
 		}
 
@@ -346,29 +382,54 @@ public class HandEvaluator {
 				}
 			}
 		}
-		
-		
 
 		int[] retVal = new int[5];
 		if (straightValue != 0) {
 			retVal[0] = 18;
 			retVal[1] = straightValue;
-	
 			return retVal;
-		} 
-
-		return retVal;
-
+		}
+		else{
+			return retVal;
+		}
 
 	}
 	
 
-//	public static int hasThreeOfAKind(Card[] cards) {
-//
-//		return false;
-//
-//	}
-//
+	public static int[] hasThreeOfAKind(ArrayList<Card> cards) {
+
+		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
+
+		int setCounter = 0;
+		int setValue = 0;
+
+		outerloop : for (int i = 0; i <= 5; i++) {
+			setCounter = 0;
+			for(int a = i+1; a < tempCards.size(); a++){
+				if(tempCards.get(i).getRank().equals(tempCards.get(a).getRank())){
+					setCounter++;
+					if(setCounter == 2){
+						setValue = tempCards.get(i).getRank().getNumeral();
+						tempCards.subList(i,i+3).clear();
+						break outerloop;
+					}
+				}
+			}
+		}
+
+		int[] retVal = new int[5];
+		if(setCounter == 2){
+			retVal[0] = SET;
+			retVal[1] = setValue;
+			retVal[2] = tempCards.get(3).getRank().getNumeral();
+			retVal[3] = tempCards.get(2).getRank().getNumeral();
+			return retVal;
+		}
+		else{
+			return retVal;
+		}
+	}
+
 	public static int[] hasTwoPair(ArrayList<Card> cards) {
 		
 		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
@@ -380,7 +441,6 @@ public class HandEvaluator {
 		
 		//iterate backwards until you get to index 1
 		for (int i = tempCards.size()-1; i > 0; i--) {
-
 			
 			if (pairCounter == 2) {
 				if (kicker != 0) { //kicker has already been found
@@ -415,7 +475,6 @@ public class HandEvaluator {
 				}
 			} else if (kicker == 0) { //set kicker if one hasn't been found yet
 				kicker = tempCards.get(i).getRank().getNumeral();
-				
 			}
 		}
 		
@@ -429,28 +488,72 @@ public class HandEvaluator {
 		}
 		
 		return retVal;
-		
 
 	}
-//
-//	public static int hasOnePair(Card[] cards) {
-//
-//		return false;
-//
-//	}
-//
-	public static int[] determineStrength(ArrayList<Card> cards) {
 
-		if (hasFourOfAKind(cards)[0] == QUAD) {
-			return hasFourOfAKind(cards);
-		} else if (hasFullHouse(cards)[0] == FULLHOUSE){
-			return hasFullHouse(cards);
-		} else if (hasFlush(cards)[0] == FLUSH){
-			return hasFlush(cards);
-		} else if (hasStraight(cards)[0] == STRAIGHT) {
-			return hasStraight(cards);
-		} else{
-			int[] retVal = new int [5];
+	public static int[] hasOnePair(ArrayList<Card> cards) {
+
+		ArrayList<Card> tempCards = new ArrayList<Card>(cards);
+
+		int pairCounter = 0;
+		int pairValue = 0;
+
+		outerloop : for (int i = 0; i <= 6; i++) {
+			pairCounter = 0;
+			for(int a = i+1; a < tempCards.size(); a++){
+				if(tempCards.get(i).getRank().equals(tempCards.get(a).getRank())){
+					pairCounter++;
+					if(pairCounter == 1){
+						pairValue = tempCards.get(i).getRank().getNumeral();
+						tempCards.subList(i,i+2).clear();
+						break outerloop;
+					}
+				}
+			}
+		}
+
+		int[] retVal = new int[5];
+		if(pairCounter == 1){
+			retVal[0] = PAIR;
+			retVal[1] = pairValue;
+			retVal[2] = tempCards.get(4).getRank().getNumeral();
+			retVal[3] = tempCards.get(3).getRank().getNumeral();
+			retVal[4] = tempCards.get(2).getRank().getNumeral();
+			return retVal;
+		}
+		else{
+			return retVal;
+		}
+	}
+
+	public static int[] determineStrength(ArrayList<Card> cards) {
+		int[] retVal;
+
+		if ((retVal = hasStraightFlush(cards))[0] == STRAIGHTFLUSH) {
+			return retVal;
+		}else if ((retVal = hasFourOfAKind(cards))[0] == QUAD){
+			return retVal;
+		}else if ((retVal = hasFullHouse(cards))[0] == FULLHOUSE){
+			return retVal;
+		} else if ((retVal = hasFlush(cards))[0] == FLUSH){
+			return retVal;
+		} else if ((retVal = hasStraight(cards))[0] == STRAIGHT) {
+			return retVal;
+		} else if ((retVal = hasThreeOfAKind(cards))[0] == SET) {
+			return retVal;
+		} else if ((retVal = hasTwoPair(cards))[0] == TWOPAIR) {
+			return retVal;
+		} else if ((retVal = hasOnePair(cards))[0] == PAIR) {
+			return retVal;
+		}
+		else{
+			//Since cards are pre-sorted by rank this will return the highest 5 card combination
+			retVal[0] = cards.get(6).getRank().getNumeral();
+			retVal[1] = cards.get(5).getRank().getNumeral();
+			retVal[2] = cards.get(4).getRank().getNumeral();
+			retVal[3] = cards.get(3).getRank().getNumeral();
+			retVal[4] = cards.get(2).getRank().getNumeral();
+
 			return retVal;
 		}
 

@@ -59,12 +59,10 @@ public class PokerGame implements Serializable {
 		//Initialize the players
 		players = new Player[numOfPlayers];
 		for (int i = 0; i < numOfPlayers; i++) {
-			//assign random position to each player
-			//int pos = posAssign.get(i);
 			System.out.print("Enter player " + i + " name: ");
 			String name = in.nextLine();
-			//Assigning random positions makes it difficult to access the  correct player based on position using an arraylist
-			players[i] = new Player(name, STARTING_CASH, i, i);
+			//Assign random position to each player
+			players[posAssign.get(i)] = new Player(name, STARTING_CASH, posAssign.get(i));
 		}
 
 		//initialize where dealer and action is (preflop)
