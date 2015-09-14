@@ -21,7 +21,7 @@ public class HandEvaluator {
 	public static final int FULLHOUSE = 20;
 	public static final int FLUSH = 19;
 	public static final int STRAIGHT = 18;
-	public static final int SET = 17;
+	public static final int TRIPS = 17;
 	public static final int TWOPAIR = 16;
 	public static final int PAIR = 15;
 	//This method will eventually evaluate the hand strengths of each player
@@ -87,18 +87,18 @@ public class HandEvaluator {
 			}
 		}
 		//Add player (array position in playerstrengths) with strongest hand
-		winnerList.add(0,winnerCounter);
+		winnerList.add(winnerCounter);
 
 		//Position of next player (compare with winner)
 		int nextPlayerCounter = winnerCounter;
-		//How many times we need to loop through (also as arraylist position when adding to winnerlist)
+		//How many times we need to loop through
 		int loopCounter = 1;
 		while(loopCounter < playerStrengths.length){
 			//If playercounter is at the end restart to the beginning, otherwise increment
 			nextPlayerCounter = (nextPlayerCounter == playerStrengths.length - 1)? 0 : nextPlayerCounter+1;
 			//If winner and nextplayer are the same, add entry to arraylist
 			if(Arrays.equals(playerStrengths[winnerCounter], playerStrengths[nextPlayerCounter])){
-				winnerList.add(loopCounter, nextPlayerCounter);
+				winnerList.add(nextPlayerCounter);
 			}
 			loopCounter++;
 		}
@@ -329,6 +329,45 @@ public class HandEvaluator {
 
 		int straightCounter = 0;
 		int straightValue = 0;
+
+		//if you don't have a straight (other than A,2,3,4,5) and
+		//cards[0] is a deuce and cards[6] is an ace
+		if (straightCounter != 4 && tempCards.get(0).getRank().getNumeral()==2
+				&&tempCards.get(6).getRank().getNumeral()==14) {
+
+			int AceStraightCounter = 0;
+			for (int i = 0; i < tempCards.size(); i++) {
+				switch(AceStraightCounter){
+					case 0: //DEUCE
+						if (tempCards.get(i).getRank().getNumeral() == 2) {
+							AceStraightCounter++;
+						}
+						break; //THREE
+					case 1:
+						if (tempCards.get(i).getRank().getNumeral() == 3) {
+							AceStraightCounter++;
+						}
+						break;
+					case 2:  //FOUR
+						if (tempCards.get(i).getRank().getNumeral() == 4) {
+							AceStraightCounter++;
+						}
+						break;
+					case 3: //FIVE
+						if (tempCards.get(i).getRank().getNumeral() == 5) {
+							AceStraightCounter++;
+						}
+						break;
+					case 4:  //ACE
+						if (tempCards.get(i).getRank().getNumeral() == 14) {
+							AceStraightCounter++;
+						}
+						straightValue = 5;
+						break;
+				}
+			}
+		}
+
 		for (int i = tempCards.size()-1; i > 0; i--) {
 			if (tempCards.get(i).getRank().getNumeral() - tempCards.get(i-1).getRank().getNumeral() == 1) {
 				straightCounter++;
@@ -337,49 +376,14 @@ public class HandEvaluator {
 					straightValue = tempCards.get(i+3).getRank().getNumeral();
 					break;
 				}
-				else{
-					//Reset straightcounter (otherwise 3456TKA would be a straight)
-					straightCounter = 0;
-					continue;
-				}
 			}
-		}
-
-		//if you don't have a straight (other than A,2,3,4,5) and
-		//cards[0] is a deuce and cards[6] is an ace
-		if (straightCounter != 4 && tempCards.get(0).getRank().getNumeral()==2 
-				&&tempCards.get(6).getRank().getNumeral()==14) {
-
-			int AceStraightCounter = 0;
-			for (int i = 0; i < tempCards.size(); i++) {
-				switch(AceStraightCounter){
-				case 0: //DEUCE
-				if (tempCards.get(i).getRank().getNumeral() == 2) {
-					AceStraightCounter++;
-				}
-				break; //THREE
-				case 1: 
-					if (tempCards.get(i).getRank().getNumeral() == 3) {
-						AceStraightCounter++;
-					}
-					break;
-				case 2:  //FOUR
-					if (tempCards.get(i).getRank().getNumeral() == 4) {
-						AceStraightCounter++;
-					}
-					break;
-				case 3: //FIVE
-					if (tempCards.get(i).getRank().getNumeral() == 5) {
-						AceStraightCounter++;
-					}
-					break;	
-				case 4:  //ACE
-					if (tempCards.get(i).getRank().getNumeral() == 14) {
-						AceStraightCounter++;
-					}
-					straightValue = 5;
-					break;
-				}
+			else if(tempCards.get(i).getRank().equals(tempCards.get(i - 1).getRank())){
+				tempCards.remove(i);
+			}
+			else{
+				//Reset straightcounter (otherwise 3456TKA would be a straight)
+				straightCounter = 0;
+				continue;
 			}
 		}
 
@@ -419,7 +423,7 @@ public class HandEvaluator {
 
 		int[] retVal = new int[5];
 		if(setCounter == 2){
-			retVal[0] = SET;
+			retVal[0] = TRIPS;
 			retVal[1] = setValue;
 			retVal[2] = tempCards.get(3).getRank().getNumeral();
 			retVal[3] = tempCards.get(2).getRank().getNumeral();
@@ -539,7 +543,7 @@ public class HandEvaluator {
 			return retVal;
 		} else if ((retVal = hasStraight(cards))[0] == STRAIGHT) {
 			return retVal;
-		} else if ((retVal = hasThreeOfAKind(cards))[0] == SET) {
+		} else if ((retVal = hasThreeOfAKind(cards))[0] == TRIPS) {
 			return retVal;
 		} else if ((retVal = hasTwoPair(cards))[0] == TWOPAIR) {
 			return retVal;

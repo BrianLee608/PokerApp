@@ -14,6 +14,7 @@ public class Player implements Serializable {
 	private boolean folded;
 	public int streetMoney;
 	public boolean endAction;
+	public boolean isAllIn;
 	//ID is essentially their seat number
 	public int id;
 	//should we make it mutable? and allow PlayGame to modify it?
@@ -91,14 +92,15 @@ public class Player implements Serializable {
 	
 	//This method gets called from a method in the Hand object (startStreet())
 	//In that method, each player is looped through to act();
-	public int act(int minimumBet) {
-		
+	public int act(int minimumBet, int pot) {
+
 		Scanner in = new Scanner(System.in);
 		boolean isCorrect = false;
 		String action;
 		int betSize = minimumBet;
-
-		if(!this.folded) {
+		if(!this.folded && !this.isAllIn) {
+			//Output pot
+			System.out.println("Pot: " + pot);
 			// Output board and player stats
 			System.out.println(this);
 
@@ -117,11 +119,17 @@ public class Player implements Serializable {
 							if(betSize < 2*minimumBet || betSize == 0) {
 								System.out.print("Illegal bet size\n");
 								betSize = minimumBet;
-							} else if (money < betSize) {
-								System.out.print("Not enough money\n");
-								betSize = minimumBet;
-							} else {
+							} else if (money <= betSize) {
+								System.out.print("All in\n");
+								betSize = money;
 								this.spendMoney(betSize);
+								streetMoney = betSize;
+								isAllIn = true;
+								isCorrect = true;
+							} else {
+								//Any additional bet is on top of previous bet
+								this.spendMoney(betSize);
+								betSize += streetMoney;
 								streetMoney = betSize;
 								isCorrect = true;
 							}
@@ -145,7 +153,15 @@ public class Player implements Serializable {
 				}
 				else if(action.equalsIgnoreCase("Call")) {
 					if(minimumBet == 0 || minimumBet - streetMoney == 0){
+						System.out.println(minimumBet);
 						System.out.print("You cannot call when there is no bet\n");
+					}
+					else if(money <= minimumBet){
+						System.out.print("All in\n");
+						betSize = money;
+						this.spendMoney(betSize);
+						isAllIn = true;
+						isCorrect = true;
 					}
 					else{
 						this.spendMoney(minimumBet - streetMoney);
@@ -162,6 +178,9 @@ public class Player implements Serializable {
 					System.out.print("Incorrect Action, Please Try Again\n");
 				}
 			}
+		}
+		else{
+			betSize = 0;
 		}
 		return betSize;
 	}
@@ -188,7 +207,7 @@ public class Player implements Serializable {
 		
 		String retVal = "";
 		retVal += name + ": " + "$" + money + "--" +
-					holeCards[0] + holeCards[1];
+					holeCards[0] + holeCards[1] + "--" + id;
 		return retVal;
 		
 	}

@@ -3,6 +3,7 @@
 
 package poker;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.*;
 
@@ -12,8 +13,7 @@ public class PokerGame implements Serializable {
 	public static final int STARTING_CASH = 200;
 	public static final int BIG_BLIND = 2;
 	public static final int SMALL_BLIND = 1;
-	private static final int NUMBER_OF_SHUFFLES = 3;
-	
+
 	//variables
 	public boolean gameIsLive;
 	public int handNumber; 
@@ -22,8 +22,7 @@ public class PokerGame implements Serializable {
 	public int bbIndex;
 	public int actionIndex;
 	public int dealerIndex;
-	public Player [] players;
-	public Card [] board;
+	public ArrayList<Player> players;
 	public ArrayList<Hand> hand;
 	
 	
@@ -32,7 +31,7 @@ public class PokerGame implements Serializable {
 
 		//Initialize a blank array of hands
 		hand = new ArrayList<Hand>();
-		
+		//Total starting players
 		totalPlayers = numOfPlayers;
 
 		handNumber = 0; 
@@ -55,15 +54,18 @@ public class PokerGame implements Serializable {
 		}
 
 		java.util.Collections.shuffle(posAssign);
+		//Only used initialize random order of players
+		Player [] randomPlayers = new Player[totalPlayers];
 
-		//Initialize the players
-		players = new Player[numOfPlayers];
 		for (int i = 0; i < numOfPlayers; i++) {
-			System.out.print("Enter player " + i + " name: ");
+			System.out.print("Enter player " + (i+1) + " name: ");
 			String name = in.nextLine();
 			//Assign random position to each player
-			players[posAssign.get(i)] = new Player(name, STARTING_CASH, posAssign.get(i));
+			randomPlayers[posAssign.get(i)] = new Player(name, STARTING_CASH, posAssign.get(i));
 		}
+
+		//Set players = randomPlayers (arrayList allows us to remove players as they are eliminated)
+		players = new ArrayList<Player>(Arrays.asList(randomPlayers));
 
 		//initialize where dealer and action is (preflop)
 		if (numOfPlayers == 2) {
@@ -74,7 +76,7 @@ public class PokerGame implements Serializable {
 		else { //if numOfPlayers > 2 
 			//Action index is after BB
 			actionIndex = 2;
-			dealerIndex = players.length - 1;
+			dealerIndex = players.size() - 1;
 		}
 
 		//Initially, game will always be live.... 
@@ -99,16 +101,16 @@ public class PokerGame implements Serializable {
 
 	private void changeIndex(){
 		//Change action index for next hand
-		actionIndex = (actionIndex == totalPlayers-1)? 0 : actionIndex+1;
+		actionIndex = (actionIndex == players.size()-1)? 0 : actionIndex+1;
 		
 		//Change sb index for next hand
-		sbIndex = (sbIndex == totalPlayers-1)? 0 : sbIndex+1;
+		sbIndex = (sbIndex == players.size()-1)? 0 : sbIndex+1;
 
 		//Change bb index for next hand
-		bbIndex = (bbIndex == totalPlayers-1)? 0 : bbIndex+1;
+		bbIndex = (bbIndex == players.size()-1)? 0 : bbIndex+1;
 
 		//Change dealer index for next hand
-		dealerIndex = (dealerIndex == totalPlayers-1)? 0 : dealerIndex+1;
+		dealerIndex = (dealerIndex == players.size()-1)? 0 : dealerIndex+1;
 		
 	}
 

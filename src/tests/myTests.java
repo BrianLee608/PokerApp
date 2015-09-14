@@ -384,10 +384,17 @@ public class myTests {
 		Card tenClub = new Card(Rank.TEN, Suit.Clubs);
 		Card aceDiamond = new Card(Rank.ACE, Suit.Diamonds);
 		Card fourDiamond = new Card(Rank.FOUR, Suit.Diamonds);
+		Card fiveClub = new Card(Rank.FIVE, Suit.Clubs);
+		Card eightSpade = new Card(Rank.EIGHT, Suit.Spades);
+		Card kingSpade = new Card(Rank.KING, Suit.Spades);
+		Card nineClub = new Card(Rank.NINE, Suit.Clubs);
+		Card jackSpade = new Card(Rank.JACK, Suit.Spades);
 
 
 
-		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(threeDiamond, sixClub, tenDiamond, fourSpade, fiveSpade));
+
+
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(threeDiamond, sixClub, fiveClub, fourSpade, fiveSpade));
 		Card[] tempBoard = temp.toArray(new Card[temp.size()]);
 		ArrayList <Card> temp1 = new ArrayList <Card>(Arrays.asList(sevenDiamond, tenSpade, tenDiamond, fourSpade, fiveSpade));
 		Card[] tempBoard1 = temp1.toArray(new Card[temp1.size()]);
@@ -397,12 +404,14 @@ public class myTests {
 		Card[] tempBoard3 = temp3.toArray(new Card[temp3.size()]);
 		ArrayList <Card> temp4 = new ArrayList <Card>(Arrays.asList(aceDiamond, fourDiamond, sevenDiamond, threeDiamond, tenDiamond));
 		Card[] tempBoard4 = temp4.toArray(new Card[temp4.size()]);
+		ArrayList <Card> temp5 = new ArrayList <Card>(Arrays.asList(deuceClub, eightSpade, sevenDiamond, deuceSpade, tenDiamond));
+		Card[] tempBoard5 = temp5.toArray(new Card[temp5.size()]);
 
 		ArrayList <Player> tempPlayers = new ArrayList<Player>(4);
 		tempPlayers.add(new Player("a",200,0));
 		tempPlayers.add(new Player("b",200,1));
-		tempPlayers.add(new Player("c",200,2));
-		tempPlayers.add(new Player("d",200,3));
+//		tempPlayers.add(new Player("c",200,2));
+//		tempPlayers.add(new Player("d",200,3));
 
 
 		Card [] tempPlayerCards1 = new Card[2];
@@ -410,27 +419,28 @@ public class myTests {
 		tempPlayerCards1[1] = sevenHeart;
 
 		Card [] tempPlayerCards2 = new Card[2];
-		tempPlayerCards2[0] = sevenSpade;
+		tempPlayerCards2[0] = deuceClub;
 		tempPlayerCards2[1] = deuceSpade;
 
 		Card [] tempPlayerCards3 = new Card[2];
-		tempPlayerCards3[0] = aceSpade;
-		tempPlayerCards3[1] = kingClub;
+		tempPlayerCards3[0] = kingSpade;
+		tempPlayerCards3[1] = nineClub;
 
 		Card [] tempPlayerCards4 = new Card[2];
-		tempPlayerCards4[0] = aceClub;
-		tempPlayerCards4[1] = deuceClub;
+		tempPlayerCards4[0] = kingClub;
+		tempPlayerCards4[1] = jackSpade;
 
-		tempPlayers.get(0).receiveHand(tempPlayerCards1);
-		tempPlayers.get(1).receiveHand(tempPlayerCards2);
-		tempPlayers.get(2).receiveHand(tempPlayerCards3);
-		tempPlayers.get(3).receiveHand(tempPlayerCards4);
+		tempPlayers.get(0).receiveHand(tempPlayerCards3);
+		tempPlayers.get(1).receiveHand(tempPlayerCards4);
+//		tempPlayers.get(2).receiveHand(tempPlayerCards3);
+//		tempPlayers.get(3).receiveHand(tempPlayerCards4);
 
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard1);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard2);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard3);
-		HandEvaluator.evaluateHands(tempPlayers, tempBoard4);
+//		HandEvaluator.evaluateHands(tempPlayers, tempBoard4);
+		HandEvaluator.evaluateHands(tempPlayers, tempBoard5);
 
 
 	}
