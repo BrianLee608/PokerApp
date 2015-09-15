@@ -27,6 +27,7 @@ public class Player implements Serializable {
 		this.id = id;
 		holeCards = new Card[2];
 		folded = false;
+		isAllIn = false;
 		//modify this later
 
 	}
@@ -92,7 +93,7 @@ public class Player implements Serializable {
 	
 	//This method gets called from a method in the Hand object (startStreet())
 	//In that method, each player is looped through to act();
-	public int act(int minimumBet, int pot) {
+	public int act(int minimumBet, int pot, Hand hand) {
 
 		Scanner in = new Scanner(System.in);
 		boolean isCorrect = false;
@@ -104,7 +105,7 @@ public class Player implements Serializable {
 			// Output board and player stats
 			System.out.println(this);
 
-			while(isCorrect == false){
+			while(!isCorrect){
 				System.out.print("Bet/Check/Call/Fold: ");
 				action = in.nextLine();
 
@@ -123,13 +124,15 @@ public class Player implements Serializable {
 								System.out.print("All in\n");
 								betSize = money;
 								this.spendMoney(betSize);
+								hand.addToPot(betSize);
 								streetMoney = betSize;
 								isAllIn = true;
+								hand.allInCounter++;
 								isCorrect = true;
 							} else {
-								//Any additional bet is on top of previous bet
-								this.spendMoney(betSize);
-								betSize += streetMoney;
+								//Any additional bet is total (don't have to remember previous bet)
+								this.spendMoney(betSize-streetMoney);
+								hand.addToPot(betSize-streetMoney);
 								streetMoney = betSize;
 								isCorrect = true;
 							}
@@ -153,20 +156,22 @@ public class Player implements Serializable {
 				}
 				else if(action.equalsIgnoreCase("Call")) {
 					if(minimumBet == 0 || minimumBet - streetMoney == 0){
-						System.out.println(minimumBet);
 						System.out.print("You cannot call when there is no bet\n");
 					}
 					else if(money <= minimumBet){
 						System.out.print("All in\n");
 						betSize = money;
 						this.spendMoney(betSize);
+						hand.addToPot(betSize);
 						isAllIn = true;
+						hand.allInCounter++;
 						isCorrect = true;
 					}
 					else{
 						this.spendMoney(minimumBet - streetMoney);
+						hand.addToPot(minimumBet-streetMoney);
 						isCorrect = true;
-						betSize = minimumBet - streetMoney;
+						betSize = minimumBet;
 					}
 				}
 				else if(action.equalsIgnoreCase("Fold")) {

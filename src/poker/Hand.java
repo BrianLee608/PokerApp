@@ -15,6 +15,7 @@ public class Hand implements Serializable {
 	private static final int RIVER = 12;
 	
 	public int pot;
+	public int allInCounter;
 	private ArrayList<Player> activePlayers;
 	public Card [] board;
 	public int startingIndex;
@@ -76,7 +77,7 @@ public class Hand implements Serializable {
 		
 	}
 	
-	private void addToPot(int amount) {
+	public void addToPot(int amount) {
 		
 		pot += amount;
 		
@@ -115,7 +116,7 @@ public class Hand implements Serializable {
 		while(true) {
 			for (int i = 0; i < game.players.size(); i++) {
 				//Allow player to act
-				int playerBet = game.players.get(tempActionCounter).act(currentBet, pot);
+				int playerBet = game.players.get(tempActionCounter).act(currentBet, pot, this);
 				//TempBet is used to gauge whether player action was a 
 				//bet, call, or check/fold (see end of method)
 				tempBet = currentBet;
@@ -124,7 +125,18 @@ public class Hand implements Serializable {
 				removePlayers(game);
 				//End while loop when only one player remains
 				if (activePlayers.size() == 1) {
-					game.players.get(activePlayers.get(0).id).winPot(pot);
+					for(int l = 0; l < game.players.size(); l++){
+						//Find winning player (for loop allows for players to be removed)
+						if(game.players.get(l).id == activePlayers.get(0).id){
+							game.players.get(l).winPot(pot);
+							break;
+						}
+					}
+					return;
+				}
+
+				//If everyone is all in and only one player is left
+				if (allInCounter == activePlayers.size()-1){
 					return;
 				}
 
@@ -132,7 +144,6 @@ public class Hand implements Serializable {
 				if (playerBet > currentBet) {
 					//update the current bet if someone bet larger
 					currentBet = playerBet; 
-					this.addToPot(currentBet);
 					//Set whoever bets as end of action (sets everyone else to false)
 					for (int k = 0; k < game.players.size(); k++) {
 						if(k == tempActionCounter){
@@ -142,10 +153,6 @@ public class Hand implements Serializable {
 							game.players.get(k).setEndAction(false);
 						}
 					}
-				}
-				//Call - doesn't affect where action ends
-				else if (playerBet != 0){
-					this.addToPot(playerBet);
 				}
 
 				//Cycle through whose turn it is (different from how many players)
@@ -179,7 +186,6 @@ public class Hand implements Serializable {
 	
 	
 	private void startPreFlop(PokerGame game) {
-
 		startStreet(game, PRE_FLOP, game.actionIndex);
 		//Only moves to flop if there are still people in pot
 		if(activePlayers.size()!=1){
@@ -234,23 +240,24 @@ public class Hand implements Serializable {
 		//is over during the river, there is more than 1 player remaining
 		if (activePlayers.size() > 1) {
 		ArrayList<Integer> idList = HandEvaluator.evaluateHands(activePlayers, board);
-			//Single winner
-			if(idList.size()==1){
-				System.out.println(idList.get(0));
-				game.players.get(idList.get(0)).winPot(pot);
+			//Splitpot
+			if(idList.size()!=1){
+				pot = pot/(idList.size());
 			}
-			//Split pot
-			else{
-				//Requires rounding (not implemented)
-				int splitPot = pot/(idList.size()-1);
-				for(int i = 0; i < idList.size(); i++){
-					game.players.get(idList.get(i)).winPot(splitPot);
+			for(int l = 0; l < game.players.size(); l++){
+				//Find winning player (for loop allows for players to be removed)
+				if(game.players.get(l).id == idList.get(0)){
+					game.players.get(l).winPot(pot);
+					break;
 				}
 			}
 		}
 
-		//Only retain players that have >$0
+		//Only retain players that have >$0 and reset allin
 		for(int i = 0; i < game.players.size(); i++){
+			//Reset all ins
+			game.players.get(i).isAllIn = false;
+			//Determine if player has been eliminated
 			if(game.players.get(i).getMoney()==0){
 				//Delete players from original group
 				game.players.remove(i);
@@ -269,9 +276,10 @@ public class Hand implements Serializable {
 				if(i <= game.dealerIndex){
 					game.dealerIndex--;
 				}
+				//Stay in same spot
+				i--;
 			}
 		}
-
 
 	}
 

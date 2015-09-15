@@ -51,10 +51,8 @@ public class HandEvaluator {
 			ArrayList<Card> allCardz = new ArrayList<Card>(Arrays.asList(allCards));
 
 			sort(allCardz);
-			System.out.println(allCardz);
 			//playerStrengths[i] is player[i]'s strength
 			playerStrengths[i] = determineStrength(allCardz);
-			System.out.println(Arrays.toString(playerStrengths[i]));
 			}
 
 		//
@@ -64,7 +62,6 @@ public class HandEvaluator {
 		for(int i = 0; i < winnerList.size(); i++){
 			idList.add(i, players.get(winnerList.get(i)).id);
 		}
-		System.out.println(idList);
 		return idList;
 	}
 
