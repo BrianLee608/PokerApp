@@ -54,25 +54,23 @@ public class Hand implements Serializable {
 		
 	}
 	
-	private void printBoard(int street, int handNum) {
+	public void printBoard(PokerGame game, int street, int handNum) {
 		
-		System.out.print("\n\t\t\tHand Number: " + handNum);
 		switch(street) {
-		case PRE_FLOP: 
-			System.out.println("\n\t\t\tPREFLOP");
+		case PRE_FLOP:
+			game.out.println("PREFLOP");
 			break;
 		case FLOP:
-			System.out.println("\n\t\t\tFLOP" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
+			game.out.println("FLOP" + Arrays.toString(Arrays.copyOfRange(board,0,3)));
 			break;
 		case TURN:
-			System.out.println("\n\t\t\tTURN" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
+			game.out.println("TURN" + Arrays.toString(Arrays.copyOfRange(board,0,4)));
 			break;
 		case RIVER:
-			System.out.println("\n\t\t\tRIVER" + Arrays.toString(board));
+			game.out.println("RIVER" + Arrays.toString(board));
 			break;
 		}
-		System.out.println("\t\t\tActive Players: " + activePlayers);
-		System.out.println("\t\t\tPot: $" + pot + "\n");
+		game.out.println("Pot: $" + pot);
 		
 		
 	}
@@ -87,7 +85,7 @@ public class Hand implements Serializable {
 
 		//initialize currentBet according to street. 
 		int currentBet = (streetIn == PRE_FLOP) ? game.BIG_BLIND : 0;
-		int tempBet;
+		int previousBet;
 		int tempActionCounter = startingIndex;
 
 		//Reset how much each player has bet on a particular street, and set endAction to false
@@ -109,17 +107,16 @@ public class Hand implements Serializable {
 			this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
 		}
 
-		//Output board
-		printBoard(streetIn, game.handNumber);
+
 		game.players.get(startingIndex).setEndAction(true);
 
 		while(true) {
 			for (int i = 0; i < game.players.size(); i++) {
 				//Allow player to act
-				int playerBet = game.players.get(tempActionCounter).act(currentBet, pot, this);
-				//TempBet is used to gauge whether player action was a 
+				int playerBet = game.players.get(tempActionCounter).act(currentBet, pot, this, game, streetIn);
+				//Previousbet is used to gauge whether player action was a
 				//bet, call, or check/fold (see end of method)
-				tempBet = currentBet;
+				previousBet = currentBet;
 
 				//Constantly update who's folded
 				removePlayers(game);
@@ -174,9 +171,10 @@ public class Hand implements Serializable {
 					tempActionCounter++;
 				}
 
-				//If currentBet > tempBet then a bet has been made 
+				//If currentBet > previousBet then a bet has been made
 				//(as opposed to a check/call), and the for loop is broken
-				if(currentBet > tempBet){
+				//Allows tempActioncounter to increase
+				if(currentBet > previousBet){
 					break;
 				}
 			}
@@ -235,7 +233,6 @@ public class Hand implements Serializable {
 	private void startRiver(PokerGame game){
 
 		startStreet(game, RIVER, startingIndex);
-	
 		//Only need to evaluate final hand strengths if by the time action
 		//is over during the river, there is more than 1 player remaining
 		if (activePlayers.size() > 1) {
@@ -280,7 +277,6 @@ public class Hand implements Serializable {
 				i--;
 			}
 		}
-
 	}
 
 	private void removePlayers(PokerGame game){

@@ -73,6 +73,9 @@ public class HandEvaluator {
 
 		while(playerCounter < playerStrengths.length-1){
 			playerCounter++;
+			//Set first player as the winner and compare with second player
+			//If first player is the winner, continue comparing with subsequent players
+			//If second player is the winner set as winner and continue comparing with subsequent players
 			for(int i = 0; i < 5; i++){
 				if(playerStrengths[winnerCounter][i] < playerStrengths[playerCounter][i]){
 					winnerCounter = playerCounter;

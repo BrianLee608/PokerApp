@@ -93,35 +93,39 @@ public class Player implements Serializable {
 	
 	//This method gets called from a method in the Hand object (startStreet())
 	//In that method, each player is looped through to act();
-	public int act(int minimumBet, int pot, Hand hand) {
+	public int act(int minimumBet, int pot, Hand hand, PokerGame game, int streetIn) {
 
-		Scanner in = new Scanner(System.in);
 		boolean isCorrect = false;
 		String action;
 		int betSize = minimumBet;
+
 		if(!this.folded && !this.isAllIn) {
-			//Output pot
-			System.out.println("Pot: " + pot);
-			// Output board and player stats
-			System.out.println(this);
-
 			while(!isCorrect){
-				System.out.print("Bet/Check/Call/Fold: ");
-				action = in.nextLine();
-
+				//Output board
+				hand.printBoard(game, streetIn, game.handNumber);
+				// Output hand and player stats
+				game.out.println(this);
+				game.out.println("Bet/Check/Call/Fold" + "\nnewline");
+				action = game.in.nextLine();
 				// Checks what action user inputs
 				if(action.equalsIgnoreCase("Bet")) {
 					while(true){
+						//Output board
+						hand.printBoard(game, streetIn, game.handNumber);
+						// Output hand and player stats
+						game.out.println(this);
 						try{
-							System.out.print("Size: ");
-							betSize = in.nextInt();
+							game.out.println("Size" + "\nnewline");
+							betSize = game.in.nextInt();
 							//Required since nextInt() doesn't actually read a next line
-							in.nextLine();
+							game.in.nextLine();
 							if(betSize < 2*minimumBet || betSize == 0) {
-								System.out.print("Illegal bet size\n");
+								game.out.println("Illegal bet size" + "\nnewline");
+								//Reset betsize to what was previously bet (miniumum bet)
 								betSize = minimumBet;
 							} else if (money <= betSize) {
-								System.out.print("All in\n");
+								game.out.println("All in" + "\nnewline");
+								//If betsize is greater than money, player is all in
 								betSize = money;
 								this.spendMoney(betSize);
 								hand.addToPot(betSize);
@@ -133,14 +137,15 @@ public class Player implements Serializable {
 								//Any additional bet is total (don't have to remember previous bet)
 								this.spendMoney(betSize-streetMoney);
 								hand.addToPot(betSize-streetMoney);
+								//Total streetmoney becomes betsize
 								streetMoney = betSize;
 								isCorrect = true;
 							}
 							break;
 						}
 						catch(java.util.InputMismatchException e) {
-							System.out.print("Not a number\n");
-							in.next();
+							game.out.println("Not a number" + "\nnewline");
+							game.in.next();
 							continue;
 						}
 					}
@@ -148,7 +153,7 @@ public class Player implements Serializable {
 				//we need a way for BB to check b/c minbet is still > 0 for him
 				else if(action.equalsIgnoreCase("Check")) {
 					if(minimumBet - streetMoney > 0){
-						System.out.print("You cannot check when the pot is raised\n");
+						game.out.println("You cannot check when the pot is raised");
 					} else{
 						isCorrect = true;
 						betSize = 0;
@@ -156,10 +161,10 @@ public class Player implements Serializable {
 				}
 				else if(action.equalsIgnoreCase("Call")) {
 					if(minimumBet == 0 || minimumBet - streetMoney == 0){
-						System.out.print("You cannot call when there is no bet\n");
+						game.out.println("You cannot call when there is no bet");
 					}
 					else if(money <= minimumBet){
-						System.out.print("All in\n");
+						game.out.println("All in" + "\nnewline");
 						betSize = money;
 						this.spendMoney(betSize);
 						hand.addToPot(betSize);
@@ -180,12 +185,14 @@ public class Player implements Serializable {
 					betSize = 0;
 				}
 				else {
-					System.out.print("Incorrect Action, Please Try Again\n");
+					game.out.println("Incorrect action, please try again");
 				}
 			}
 		}
 		else{
 			betSize = 0;
+			//If player has folded we need to tell client where output ends
+			game.out.println("" + "\nnewline" );
 		}
 		return betSize;
 	}
