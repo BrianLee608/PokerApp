@@ -131,7 +131,7 @@ public class Player implements Serializable {
 								hand.addToPot(betSize);
 								streetMoney = betSize;
 								isAllIn = true;
-								hand.allInCounter++;
+								hand.increaseAllInCounter();
 								isCorrect = true;
 							} else {
 								//Any additional bet is total (don't have to remember previous bet)
@@ -169,7 +169,7 @@ public class Player implements Serializable {
 						this.spendMoney(betSize);
 						hand.addToPot(betSize);
 						isAllIn = true;
-						hand.allInCounter++;
+						hand.increaseAllInCounter();
 						isCorrect = true;
 					}
 					else{

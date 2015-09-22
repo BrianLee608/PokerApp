@@ -88,7 +88,7 @@ public class PokerGame implements Serializable {
 			startNewHand();
 
 		}catch (IOException e) {
-			out.println("Client handling error: " + e);
+			System.out.println("Client handling error: " + e);
 		}
 	}
 	

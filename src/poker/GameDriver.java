@@ -51,12 +51,18 @@ public class GameDriver extends Thread {
 							in.nextLine();
 							break;
 						} catch (java.util.InputMismatchException e) {
-							out.println("Not a number" + "\nnewline");
+							out.println("Not a number");
+							in.next();
+							continue;
+						}catch (java.util.NoSuchElementException n){
+							out.println("Empty input");
 							in.next();
 							continue;
 						}
 
 					}
+					System.out.println("a");
+					System.out.println(players);
 					pokerGame = new PokerGame(players, socket);
 				}
 

@@ -65,6 +65,42 @@ public class HandEvaluator {
 		return idList;
 	}
 
+	public static ArrayList<Integer> evaluateHeadsUpHands(ArrayList<HeadsUpPlayer> players, Card[] board) {
+
+		//playerStrengths represents the numbering system for each player
+		int[][] playerStrengths = new int[players.size()][5];
+
+		//initialize with all 5 cards of the board
+		Card[] allCards = new Card[7];
+		allCards[0] = board[0];
+		allCards[1] = board[1];
+		allCards[2] = board[2];
+		allCards[3] = board[3];
+		allCards[4] = board[4];
+
+		for (int i = 0; i < players.size(); i++) {
+
+			//unique for each player
+			allCards[5] = players.get(i).holeCards[0];
+			allCards[6] = players.get(i).holeCards[1];
+
+			ArrayList<Card> allCardz = new ArrayList<Card>(Arrays.asList(allCards));
+
+			sort(allCardz);
+			//playerStrengths[i] is player[i]'s strength
+			playerStrengths[i] = determineStrength(allCardz);
+		}
+
+		//
+		ArrayList <Integer> winnerList = determineWinner(playerStrengths);
+		ArrayList <Integer> idList = new ArrayList<Integer>(winnerList.size());
+
+		for(int i = 0; i < winnerList.size(); i++){
+			idList.add(i, players.get(winnerList.get(i)).id);
+		}
+		return idList;
+	}
+
 	private static ArrayList<Integer> determineWinner(int[][] playerStrengths) {
 		//Allows for ties if players have the same hand
 		ArrayList<Integer> winnerList = new ArrayList<Integer>(playerStrengths.length);

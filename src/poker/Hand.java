@@ -14,11 +14,11 @@ public class Hand implements Serializable {
 	private static final int TURN = 11;
 	private static final int RIVER = 12;
 	
-	public int pot;
-	public int allInCounter;
+	private int pot;
+	private int allInCounter;
 	private ArrayList<Player> activePlayers;
-	public Card [] board;
-	public int startingIndex;
+	private Card [] board;
+	private int startingIndex;
 	
 	//This hand lives inside an array which a PokerGame object has access to.
 	//This constructor will create a temporary array of players which will be
@@ -74,7 +74,11 @@ public class Hand implements Serializable {
 		
 		
 	}
-	
+
+	public int getPot(){
+		return pot;
+	}
+
 	public void addToPot(int amount) {
 		
 		pot += amount;
@@ -287,6 +291,14 @@ public class Hand implements Serializable {
 			}
 		}
 
+	}
+
+	public void increaseAllInCounter(){
+		allInCounter++;
+	}
+
+	public void resetAllInCounter(){
+		allInCounter = 0;
 	}
 
 }
