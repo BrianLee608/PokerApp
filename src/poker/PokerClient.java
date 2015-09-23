@@ -54,7 +54,8 @@ public class PokerClient {
                 //Clear message field of previous entries (no redundant appends)
                 messageArea.setText("");
                 //If first message received is waiting for.. then set actionListener to output nothing
-                if(messages.get(0).equals("Waiting for other player to act") || messages.get(0).equals("Waiting for other player to input name")){
+                if(messages.get(0).equals("Waiting for other player to act") || 
+                		messages.get(0).equals("Waiting for other player to input name")){
                     turn = false;
                 }
                 else{

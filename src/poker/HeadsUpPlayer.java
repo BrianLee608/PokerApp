@@ -2,7 +2,7 @@
 
 package poker;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+//import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -237,7 +237,8 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         return betSize;
     }
 
-    public synchronized void spectate(HeadsUpHand hand, HeadsUpPokerGame game, int streetIn, String message) {
+    public synchronized void spectate(HeadsUpHand hand, HeadsUpPokerGame game, 
+    									int streetIn, String message) {
         clearMessages();
         addMessage(message);
         //Output board

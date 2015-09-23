@@ -19,11 +19,13 @@ public class PokerServer {
                 //Each client window opens up a new socket
                 Socket socket1 = serverSocket.accept();
                 System.out.println("Player 1 has joined");
-                HeadsUpPlayer player1 = new HeadsUpPlayer(null, 200, 0, socket1, 1);
+                HeadsUpPlayer player1 = new HeadsUpPlayer(
+                				null, PokerGame.STARTING_CASH, 0, socket1, 1);
 
                 Socket socket2 = serverSocket.accept();
                 System.out.println("Player 2 has joined");
-                HeadsUpPlayer player2 = new HeadsUpPlayer(null, 200, 1, socket2, 0);
+                HeadsUpPlayer player2 = new HeadsUpPlayer(
+                				null, PokerGame.STARTING_CASH, 1, socket2, 0);
 
                 //Once both players have joined add them to driver and start game
                 //HeadsUpGameDriver class acts as our server
