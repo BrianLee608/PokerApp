@@ -14,11 +14,11 @@ public class HeadsUpHand implements Serializable {
     private static final int TURN = 11;
     private static final int RIVER = 12;
 
-    public int pot;
-    public int allInCounter;
+    private int pot;
+    private int allInCounter;
     private ArrayList<HeadsUpPlayer> activePlayers;
-    public Card [] board;
-    public int startingIndex;
+    private Card [] board;
+    private int startingIndex;
 
     //This hand lives inside an array which a PokerGame object has access to.
     //This constructor will create a temporary array of players which will be
@@ -110,6 +110,21 @@ public class HeadsUpHand implements Serializable {
 
         while(true) {
             for (int i = 0; i < game.players.size(); i++) {
+                //If everyone but one person is all in skip till handevaluator
+                if(allInCounter == activePlayers.size()){
+                    return;
+                }
+                //Allow other player to spectate passively
+                if(tempActionCounter==0){
+                    game.players.get(1).spectate(this, game, streetIn, "Waiting for other player to act");
+                    game.players.get(1).setTurnToAct(false);
+                }
+                else{
+                    game.players.get(0).spectate(this, game, streetIn, "Waiting for other player to act");
+                    game.players.get(1).setTurnToAct(false);
+                }
+
+                game.players.get(tempActionCounter).setTurnToAct(true);
                 //Allow player to act
                 int playerBet = game.players.get(tempActionCounter).act(currentBet, pot, this, game, streetIn);
 
@@ -128,11 +143,6 @@ public class HeadsUpHand implements Serializable {
                             break;
                         }
                     }
-                    return;
-                }
-
-                //If everyone is all in and only one player is left
-                if (allInCounter == activePlayers.size()-1){
                     return;
                 }
 
@@ -163,6 +173,9 @@ public class HeadsUpHand implements Serializable {
                 } else {
                     //If action is on the last player, check if next player is last to act
                     if (game.players.get(tempActionCounter + 1).endAction) {
+                        if(allInCounter == activePlayers.size()-1){
+                            allInCounter++;
+                        }
                         //Break out of while loop
                         return;
                     }
@@ -232,21 +245,43 @@ public class HeadsUpHand implements Serializable {
     private void startRiver(HeadsUpPokerGame game){
 
         startStreet(game, RIVER, startingIndex);
+        //Used to ouput whoever is the winner to the screen
+        String winnerMessage = "";
+        boolean splitPot = false;
         //Only need to evaluate final hand strengths if by the time action
         //is over during the river, there is more than 1 player remaining
         if (activePlayers.size() > 1) {
             ArrayList<Integer> idList = HandEvaluator.evaluateHeadsUpHands(activePlayers, board);
             //Splitpot
+            //If non-integer number player closest to dealer gets remainder (not yet implemented)
             if(idList.size()!=1){
                 pot = pot/(idList.size());
+                splitPot = true;
             }
             for(int l = 0; l < game.players.size(); l++){
-                //Find winning player (for loop allows for players to be removed)
-                if(game.players.get(l).id == idList.get(0)){
-                    game.players.get(l).winPot(pot);
-                    break;
+                for(int m = 0; m < idList.size(); m++){
+                    //Find winning player (for loop allows for players to be removed)
+                    if(game.players.get(l).id == idList.get(m)){
+                        game.players.get(l).winPot(pot);
+                        if(splitPot){
+                            winnerMessage = "Split pot";
+                        }
+                        else{
+                            winnerMessage = game.players.get(l).getPlayerName() + " is the winner";
+                        }
+                        break;
+                    }
                 }
             }
+        }
+
+        game.players.get(0).spectate(this, game, RIVER, winnerMessage);
+        game.players.get(1).spectate(this, game, RIVER, winnerMessage);
+        //Pause game for 10000ms (will either move on to next hand or end)
+        try{
+            Thread.sleep(10000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
         }
 
         //Only retain players that have >$0 and reset allin
@@ -255,25 +290,17 @@ public class HeadsUpHand implements Serializable {
             game.players.get(i).isAllIn = false;
             //Determine if player has been eliminated
             if(game.players.get(i).getMoney()==0){
-                //Delete players from original group
+                //For heads up once a player is removed game is over (or rebuys - requires implementation)
+                game.players.get(0).endGameMessage();
+                game.players.get(1).endGameMessage();
+                //Pause game for 10000ms
+                try{
+                    Thread.sleep(10000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                //Delete players from original group (used to end thread for headsup)
                 game.players.remove(i);
-                //Ugly code alert
-                //Essentially if the player deleted is behind (or is) whatever index we subtract one
-                //so that when changeIndex() runs the index doesn't change (since -1 + 1 = 0)
-                if(i <= game.actionIndex){
-                    game.actionIndex--;
-                }
-                if(i <= game.sbIndex){
-                    game.sbIndex--;
-                }
-                if(i <= game.bbIndex){
-                    game.bbIndex--;
-                }
-                if(i <= game.dealerIndex){
-                    game.dealerIndex--;
-                }
-                //Stay in same spot
-                i--;
             }
         }
     }
@@ -286,6 +313,10 @@ public class HeadsUpHand implements Serializable {
             }
         }
 
+    }
+
+    public void increaseAllInCounter(){
+        allInCounter++;
     }
 
 }

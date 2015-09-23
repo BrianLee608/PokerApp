@@ -16,6 +16,7 @@ public class PokerClient {
     private JTextField dataField = new JTextField(30);
     private JTextArea messageArea = new JTextArea(6, 30);
     private ArrayList<String> messages;
+    private boolean turn;
 
     public PokerClient() {
         messageArea.setEditable(false);
@@ -23,18 +24,22 @@ public class PokerClient {
         frame.getContentPane().add(dataField, "North");
         //Message box
         frame.getContentPane().add(messageArea, "Center");
-        //Initial message is loaded when client constructor is called
 
         dataField.addActionListener(new ActionListener() {
             @Override
             //Only runs when user presses enter
             public void actionPerformed(ActionEvent actionEvent) {
-
-                //Send user textinput to server (essentially our GameDriver class becomes our server)
-                out.println(dataField.getText());
-
-                //Clear text field
-                dataField.setText("");
+                if(turn){
+                    //When user presses enter textfield is send to server
+                    out.println(dataField.getText());
+                    out.flush();
+                    //Clear text field
+                    dataField.setText("");
+                }
+                else{
+                    //Clear text field
+                    dataField.setText("");
+                }
             }
         });
     }
@@ -42,12 +47,21 @@ public class PokerClient {
     private void receive(){
 
         try {
+            //While client is active constantly listen for messages from the server
             while(true){
+                //Cast message from server as an arraylist of strings
                 messages = (ArrayList<String>) in.readObject();
-                System.out.println(messages);
-                //Clear message field of previous entries
+                //Clear message field of previous entries (no redundant appends)
                 messageArea.setText("");
+                //If first message received is waiting for.. then set actionListener to output nothing
+                if(messages.get(0).equals("Waiting for other player to act") || messages.get(0).equals("Waiting for other player to input name")){
+                    turn = false;
+                }
+                else{
+                    turn = true;
+                }
                 for(int i = 0; i < messages.size(); i++){
+                    //Add all messages to messageArea
                     messageArea.append(messages.get(i) + "\n");
                 }
             }

@@ -20,9 +20,8 @@ public class HeadsUpDriver extends Thread {
 
     public void run(){
         try {
+            //Initialize new poker game
             HeadsUpPokerGame pokerGame = new HeadsUpPokerGame(2, player1, player2);
-            player1.setGame(pokerGame);
-            player1.setGame(pokerGame);
 
         }finally {
             try {

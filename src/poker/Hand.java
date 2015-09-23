@@ -116,6 +116,10 @@ public class Hand implements Serializable {
 
 		while(true) {
 			for (int i = 0; i < game.players.size(); i++) {
+				//If everyone is all in skip till handevaluator
+				if(allInCounter == activePlayers.size()){
+					return;
+				}
 				//Allow player to act
 				int playerBet = game.players.get(tempActionCounter).act(currentBet, pot, this, game, streetIn);
 				//Previousbet is used to gauge whether player action was a
@@ -133,11 +137,6 @@ public class Hand implements Serializable {
 							break;
 						}
 					}
-					return;
-				}
-
-				//If everyone is all in and only one player is left
-				if (allInCounter == activePlayers.size()-1){
 					return;
 				}
 
@@ -168,6 +167,10 @@ public class Hand implements Serializable {
 				} else {
 					//If action is on the last player, check if next player is last to act
 					if (game.players.get(tempActionCounter + 1).endAction) {
+						//Allows last player to act if everyone else is all in (afterwards skips to handevaulator)
+						if(allInCounter == activePlayers.size()-1){
+							allInCounter++;
+						}
 						//Break out of while loop
 						return;
 					}
@@ -246,10 +249,12 @@ public class Hand implements Serializable {
 				pot = pot/(idList.size());
 			}
 			for(int l = 0; l < game.players.size(); l++){
-				//Find winning player (for loop allows for players to be removed)
-				if(game.players.get(l).id == idList.get(0)){
-					game.players.get(l).winPot(pot);
-					break;
+				for(int m = 0; m < idList.size(); m++){
+					//Find winning player (for loop allows for players to be removed)
+					if(game.players.get(l).id == idList.get(m)){
+						game.players.get(l).winPot(pot);
+						break;
+					}
 				}
 			}
 		}
@@ -295,10 +300,6 @@ public class Hand implements Serializable {
 
 	public void increaseAllInCounter(){
 		allInCounter++;
-	}
-
-	public void resetAllInCounter(){
-		allInCounter = 0;
 	}
 
 }

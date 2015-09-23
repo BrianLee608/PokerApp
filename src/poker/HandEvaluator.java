@@ -45,8 +45,8 @@ public class HandEvaluator {
 		for (int i = 0; i < players.size(); i++) {
 
 			//unique for each player
-			allCards[5] = players.get(i).holeCards[0];
-			allCards[6] = players.get(i).holeCards[1];
+			allCards[5] = players.get(i).getHoleCards()[0];
+			allCards[6] = players.get(i).getHoleCards()[1];
 
 			ArrayList<Card> allCardz = new ArrayList<Card>(Arrays.asList(allCards));
 
@@ -81,8 +81,8 @@ public class HandEvaluator {
 		for (int i = 0; i < players.size(); i++) {
 
 			//unique for each player
-			allCards[5] = players.get(i).holeCards[0];
-			allCards[6] = players.get(i).holeCards[1];
+			allCards[5] = players.get(i).getHoleCards()[0];
+			allCards[6] = players.get(i).getHoleCards()[1];
 
 			ArrayList<Card> allCardz = new ArrayList<Card>(Arrays.asList(allCards));
 

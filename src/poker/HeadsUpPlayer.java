@@ -5,30 +5,32 @@ package poker;
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.*;
 
 public class HeadsUpPlayer extends Thread implements Serializable{
 
-    public String name;
+    private String name;
     private int money;
-    public Card [] holeCards;
+    private Card [] holeCards;
     private boolean folded;
     private int streetMoney;
     public boolean endAction;
     public boolean isAllIn;
     //ID is essentially their seat number
-    public int id;
+    public final int id;
+    private final int otherPlayerID;
     private Socket socket;
     private Scanner in;
     private ObjectOutputStream out;
-    private HeadsUpPokerGame game;
     private ArrayList<String> messages;
     private String response;
+    private boolean turnToAct;
     //should we make it mutable? and allow PlayGame to modify it?
     //add more variables
 
-    public HeadsUpPlayer(String name, int money, int id, Socket socket) {
+    public HeadsUpPlayer(String name, int money, int id, Socket socket, int otherPlayerID) {
 
         this.name = name;
         this.money = money;
@@ -38,6 +40,8 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         isAllIn = false;
         this.socket = socket;
         messages = new ArrayList<String>();
+        turnToAct = false;
+        this.otherPlayerID = otherPlayerID;
         try {
             in = new Scanner(new InputStreamReader(socket.getInputStream()));
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -48,13 +52,24 @@ public class HeadsUpPlayer extends Thread implements Serializable{
     }
 
     public void run(){
+        //Runs when player thread is started
         addMessage("Game has started");
         addMessage("Enter player name");
         send();
         clearMessages();
         this.name = receive();
-        //Wait until both players have entered a name
-        pause();
+        //Output message and end player thread (Driver is paused until both names are inputted)
+        addMessage("Waiting for other player to input name");
+        send();
+        clearMessages();
+    }
+
+    public String getPlayerName(){
+        return name;
+    }
+
+    public Card[] getHoleCards(){
+        return holeCards;
     }
 
     public int getMoney() {
@@ -68,16 +83,6 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         holeCards[0] = hand[0];
         holeCards[1] = hand[1];
         folded = false;
-
-    }
-
-    public Card getCardAtPosition(int pos) {
-
-        if (pos != 0 || pos != 1) {
-            //throw an exception
-        }
-
-        return holeCards[pos];
 
     }
 
@@ -120,7 +125,8 @@ public class HeadsUpPlayer extends Thread implements Serializable{
 
     //This method gets called from a method in the Hand object (startStreet())
     //In that method, each player is looped through to act();
-    public int act(int minimumBet, int pot, HeadsUpHand hand, HeadsUpPokerGame game, int streetIn) {
+    public synchronized int act(int minimumBet, int pot, HeadsUpHand hand, HeadsUpPokerGame game, int streetIn) {
+
         boolean isCorrect = false;
         String action;
         int betSize = minimumBet;
@@ -160,15 +166,16 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                                 hand.addToPot(betSize);
                                 streetMoney = betSize;
                                 isAllIn = true;
-                                hand.allInCounter++;
+                                hand.increaseAllInCounter();
                                 isCorrect = true;
                             } else {
                                 //Any additional bet is total (don't have to remember previous bet)
-                                this.spendMoney(betSize-streetMoney);
+                                this.spendMoney(betSize - streetMoney);
                                 hand.addToPot(betSize-streetMoney);
                                 //Total streetmoney becomes betsize
                                 streetMoney = betSize;
                                 isCorrect = true;
+                                game.players.get(otherPlayerID).addMessage(name + " bet " + betSize);
                             }
                             break;
                         }
@@ -186,6 +193,7 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                     } else{
                         isCorrect = true;
                         betSize = 0;
+                        game.players.get(otherPlayerID).addMessage(name + " checked");
                     }
                 }
                 else if(action.equalsIgnoreCase("Call")) {
@@ -198,20 +206,25 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                         this.spendMoney(betSize);
                         hand.addToPot(betSize);
                         isAllIn = true;
-                        hand.allInCounter++;
+                        hand.increaseAllInCounter();
                         isCorrect = true;
+                        if(streetIn!=12){
+                            game.players.get(otherPlayerID).addMessage(name + " is all in");
+                        }
                     }
                     else{
                         this.spendMoney(minimumBet - streetMoney);
-                        hand.addToPot(minimumBet-streetMoney);
+                        hand.addToPot(minimumBet - streetMoney);
                         isCorrect = true;
                         betSize = minimumBet;
+                        game.players.get(otherPlayerID).addMessage(name + " called " + betSize);
                     }
                 }
                 else if(action.equalsIgnoreCase("Fold")) {
                     this.fold();
                     isCorrect = true;
                     betSize = 0;
+                    game.players.get(otherPlayerID).addMessage(name + " folded like a nit");
                 }
                 else {
                     addMessage("Incorrect action, please try again");
@@ -224,7 +237,19 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         return betSize;
     }
 
-    public void winPot(int amount) {
+    public synchronized void spectate(HeadsUpHand hand, HeadsUpPokerGame game, int streetIn, String message) {
+        clearMessages();
+        addMessage(message);
+        //Output board
+        hand.printBoard(game, streetIn, game.handNumber, this);
+        // Output hand and player stats
+        addMessage(this.toString());
+        send();
+        clearMessages();
+
+    }
+
+        public void winPot(int amount) {
 
         money += amount;
 
@@ -242,39 +267,29 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         endAction = bool;
     }
 
-    public void setGame(HeadsUpPokerGame game){
-        this.game = game;
-    }
-
-    public void pause(){
-        synchronized (this){
-            try{
-                System.out.println("Waiting");
-                this.wait();
-            }catch(InterruptedException e){
-            }
-        }
-    }
-
-    public void restart(){
-        synchronized (this){
-            this.notify();
-        }
+    public void endGameMessage(){
+        addMessage("Game is over");
+        send();
+        clearMessages();
     }
 
     public void addMessage(String message){
+        //Add message to queue
         messages.add(message);
     }
 
     private void clearMessages(){
+        //Clear messages (usually called after send)
         messages.clear();
     }
 
     private void send(){
-        System.out.println(messages);
         try {
+            //Reset objectOutputStream
             out.reset();
+            //Write arraylist of messages to outputStream
             out.writeObject(messages);
+            //Flushes outputStream
             out.flush();
         }catch(IOException e){
             e.printStackTrace();
@@ -285,19 +300,22 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         response = null;
         try {
             while(response == null){
-                Thread.sleep(1000);
-                response = in.nextLine();
+                if(in.hasNextLine()){
+                    //Continue trying to recieve message until response is stored
+                    response = in.nextLine();
+                }
             }
         }catch(NoSuchElementException e){
-            e.printStackTrace();
-        }catch(InterruptedException e){
             e.printStackTrace();
         }
         return response;
     }
 
-    public String toString() {
+    public void setTurnToAct(boolean bool){
+        turnToAct = bool;
+    }
 
+    public String toString() {
         String retVal = "";
         retVal += name + ": " + "$" + money + "--" +
                 holeCards[0] + holeCards[1] + "--" + id;

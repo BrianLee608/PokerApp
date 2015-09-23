@@ -10,13 +10,13 @@ public class Player implements Serializable {
 
 	private final String name;
 	private int money;
-	public Card [] holeCards;
+	private Card [] holeCards;
 	private boolean folded;
-	public int streetMoney;
+	private int streetMoney;
 	public boolean endAction;
 	public boolean isAllIn;
 	//ID is essentially their seat number
-	public int id;
+	public final int id;
 	//should we make it mutable? and allow PlayGame to modify it?
 	//add more variables
 
@@ -45,15 +45,9 @@ public class Player implements Serializable {
 		folded = false;
 		
 	}
-	
-	public Card getCardAtPosition(int pos) {
-		
-		if (pos != 0 || pos != 1) { 
-			//throw an exception
-		}
-		
-		return holeCards[pos];
-		
+
+	public Card[] getHoleCards(){
+		return holeCards;
 	}
 	
 	public void postBB() {

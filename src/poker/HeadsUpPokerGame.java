@@ -41,14 +41,14 @@ public class HeadsUpPokerGame implements Serializable {
         players = new ArrayList<HeadsUpPlayer>();
 
         try {
-            while (player1.name.equals("") || player2.name.equals("")) {
+            while (player1.getPlayerName()==null || player2.getPlayerName()==null) {
+                //Wait for both players to input names before continuing
+                //Allows server to only check every 100 ms
+                //Code for some reason doesn't function correctly without sleep (may be due to refreshing game state after waking)
                 Thread.sleep(100);
             }
         }catch(InterruptedException e){
         }
-
-        player1.restart();
-        player2.restart();
 
         players.add(player1);
         players.add(player2);
@@ -70,6 +70,10 @@ public class HeadsUpPokerGame implements Serializable {
 
         while (gameIsLive) {
             hand.add(new HeadsUpHand(this));
+            //End game
+            if(players.size()==1){
+                break;
+            }
             handNumber++;
             //After every hand change indexes
             this.changeIndex();
