@@ -66,10 +66,10 @@ public class PokerClient {
                     messageArea.append(messages.get(i) + "\n");
                 }
             }
-        }catch(IOException i){
-            i.printStackTrace();
-        }catch(ClassNotFoundException j){
-            j.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
         }
     }
 

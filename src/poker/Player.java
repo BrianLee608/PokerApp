@@ -113,11 +113,7 @@ public class Player implements Serializable {
 							betSize = game.in.nextInt();
 							//Required since nextInt() doesn't actually read a next line
 							game.in.nextLine();
-							if(betSize < 2*minimumBet || betSize == 0) {
-								game.out.println("Illegal bet size" + "\nnewline");
-								//Reset betsize to what was previously bet (miniumum bet)
-								betSize = minimumBet;
-							} else if (money <= betSize) {
+							if (money <= betSize) {
 								game.out.println("All in" + "\nnewline");
 								//If betsize is greater than money, player is all in
 								betSize = money;
@@ -127,6 +123,10 @@ public class Player implements Serializable {
 								isAllIn = true;
 								hand.increaseAllInCounter();
 								isCorrect = true;
+							}else if(betSize < 2*minimumBet || betSize == 0) {
+								game.out.println("Illegal bet size" + "\nnewline");
+								//Reset betsize to what was previously bet (miniumum bet)
+								betSize = minimumBet;
 							} else {
 								//Any additional bet is total (don't have to remember previous bet)
 								this.spendMoney(betSize-streetMoney);

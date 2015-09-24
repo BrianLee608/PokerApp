@@ -110,7 +110,7 @@ public class HeadsUpHand implements Serializable {
 
         while(true) {
             for (int i = 0; i < game.players.size(); i++) {
-                //If everyone but one person is all in skip till handevaluator
+                //If everyone is all in skip till handevaluator
                 if(allInCounter == activePlayers.size()){
                     return;
                 }
@@ -174,6 +174,9 @@ public class HeadsUpHand implements Serializable {
                     //If action is on the last player, check if next player is last to act
                     if (game.players.get(tempActionCounter + 1).endAction) {
                         if(allInCounter == activePlayers.size()-1){
+                            System.out.println("allin++");
+                            //If everyone but one person is all in, let him act then ++ to allincounter
+                            //Causes if statement at beginning of while loop to skip all later actions
                             allInCounter++;
                         }
                         //Break out of while loop
@@ -260,6 +263,7 @@ public class HeadsUpHand implements Serializable {
             }
             for(int l = 0; l < game.players.size(); l++){
                 for(int m = 0; m < idList.size(); m++){
+                    System.out.println(idList);
                     //Find winning player (for loop allows for players to be removed)
                     if(game.players.get(l).id == idList.get(m)){
                         game.players.get(l).winPot(pot);
@@ -268,6 +272,7 @@ public class HeadsUpHand implements Serializable {
                         }
                         else{
                             winnerMessage = game.players.get(l).getPlayerName() + " is the winner";
+                            System.out.println(winnerMessage);
                         }
                         break;
                     }

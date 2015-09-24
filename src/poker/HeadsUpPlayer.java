@@ -135,7 +135,7 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                 //Output board
                 hand.printBoard(game, streetIn, game.handNumber, this);
                 // Output hand and player stats
-                addMessage(this.toString());
+                addMessage(this.toString(game));
                 addMessage("Bet/Check/Call/Fold");
                 send();
                 clearMessages();
@@ -146,7 +146,7 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                         //Output board
                         hand.printBoard(game, streetIn, game.handNumber, this);
                         // Output hand and player stats
-                        addMessage(this.toString());
+                        addMessage(this.toString(game));
                         try{
                             addMessage("Size");
                             send();
@@ -154,12 +154,23 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                             //Requires exception?
                             betSize = Integer.parseInt(receive());
 
-                            if(betSize < 2*minimumBet || betSize == 0) {
-                                addMessage("Illegal bet size");
-                                //Reset betsize to what was previously bet (miniumum bet)
-                                betSize = minimumBet;
-                            } else if (money <= betSize) {
-                                addMessage("All in");
+                            //For headsup this is fine since there isn't a scenario where your betsize is
+                            //larger than how much the other player has and also less that what you have
+                            if (betSize > game.players.get(otherPlayerID).getMoney()){
+                                //Only allow player to bet how much other play has
+                                betSize = game.players.get(otherPlayerID).getMoney();
+                                //Any additional bet is total (don't have to remember previous bet)
+                                this.spendMoney(betSize - streetMoney);
+                                hand.addToPot(betSize-streetMoney);
+                                //Total streetmoney becomes betsize
+                                streetMoney = betSize;
+                                isCorrect = true;
+                                game.players.get(otherPlayerID).addMessage(name + " puts you all in");
+                                //Increase all in counter so that
+                                //when other player calls further actions are skipped
+                                hand.increaseAllInCounter();
+                            }
+                            else if (money <= betSize) {
                                 //If betsize is greater than money, player is all in
                                 betSize = money;
                                 this.spendMoney(betSize);
@@ -168,6 +179,13 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                                 isAllIn = true;
                                 hand.increaseAllInCounter();
                                 isCorrect = true;
+                                if(streetIn!=12){
+                                    game.players.get(otherPlayerID).addMessage(name + " is all in");
+                                }
+                            } else if(betSize < 2*minimumBet || betSize == 0) {
+                                addMessage("Illegal bet size");
+                                //Reset betsize to what was previously bet (miniumum bet)
+                                betSize = minimumBet;
                             } else {
                                 //Any additional bet is total (don't have to remember previous bet)
                                 this.spendMoney(betSize - streetMoney);
@@ -201,11 +219,13 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                         addMessage("You cannot call when there is no bet");
                     }
                     else if(money <= minimumBet){
-                        addMessage("All in");
                         betSize = money;
                         this.spendMoney(betSize);
                         hand.addToPot(betSize);
                         isAllIn = true;
+                        //If you call all in then hand must end
+                        //Add 1 to AllInCounter in order to skip further actions == players.size() in Hand class
+                        //Betting all in is different since other player still has to act
                         hand.increaseAllInCounter();
                         isCorrect = true;
                         if(streetIn!=12){
@@ -244,7 +264,7 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         //Output board
         hand.printBoard(game, streetIn, game.handNumber, this);
         // Output hand and player stats
-        addMessage(this.toString());
+        addMessage(this.toString(game));
         send();
         clearMessages();
 
@@ -316,10 +336,17 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         turnToAct = bool;
     }
 
-    public String toString() {
+    public String toString(HeadsUpPokerGame game) {
         String retVal = "";
+        String position;
+        if(id==game.bbIndex){
+            position = "BB";
+        }
+        else{
+            position = "SB/D";
+        }
         retVal += name + ": " + "$" + money + "--" +
-                holeCards[0] + holeCards[1] + "--" + id;
+                holeCards[0] + holeCards[1] + "--" + position;
         return retVal;
 
     }
