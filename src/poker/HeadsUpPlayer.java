@@ -91,14 +91,14 @@ public class HeadsUpPlayer extends Thread implements Serializable{
         if (money == 1) {
             money -= 1;
         } else {
-            money -= PokerGame.BIG_BLIND;
+            money -= HeadsUpPokerGame.BIG_BLIND;
         }
 
     }
 
     public void postSB() {
 
-        money -= PokerGame.SMALL_BLIND;
+        money -= HeadsUpPokerGame.SMALL_BLIND;
 
     }
 
@@ -152,7 +152,11 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                             send();
                             clearMessages();
                             //Requires exception?
-                            betSize = Integer.parseInt(receive());
+                            try{
+                                betSize = Integer.parseInt(receive());
+                            }catch(NumberFormatException e){
+                                e.printStackTrace();
+                            }
 
                             //For headsup this is fine since there isn't a scenario where your betsize is
                             //larger than how much the other player has and also less that what you have

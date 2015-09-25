@@ -184,6 +184,8 @@ public class myTests {
 		Card threeHeart = new Card(Rank.THREE, Suit.Hearts);
 		Card threeSpade = new Card(Rank.THREE, Suit.Spades);
 		Card threeClub = new Card(Rank.THREE, Suit.Clubs);
+		Card eightClub = new Card(Rank.EIGHT, Suit.Clubs);
+
 
 		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(sevenSpade,
 				sixClub, threeDiamond, deuceSpade, sevenClub, fourSpade, fiveSpade));
@@ -192,8 +194,8 @@ public class myTests {
 		HandEvaluator.sort(temp);
 		
 		ArrayList <Card> temp2 = new ArrayList <Card>(Arrays.asList(deuceHeart,
-				threeClub, fourSpade, fiveHeart, sevenClub, aceClub, fiveSpade));
-//		HandEvaluator.sort(temp2);
+				threeClub, fourSpade, fiveHeart, sevenClub, eightClub, sixClub));
+		HandEvaluator.sort(temp2);
 //		System.out.println("About to test regular flush");
 //		System.out.println(temp2);
 //		System.out.println(Arrays.toString(HandEvaluator.hasStraight(temp2)));
@@ -394,7 +396,7 @@ public class myTests {
 
 
 
-		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(threeDiamond, sixClub, fiveClub, fourSpade, fiveSpade));
+		ArrayList <Card> temp = new ArrayList <Card>(Arrays.asList(threeDiamond, eightSpade, fiveClub, fourSpade, deuceClub));
 		Card[] tempBoard = temp.toArray(new Card[temp.size()]);
 		ArrayList <Card> temp1 = new ArrayList <Card>(Arrays.asList(sevenDiamond, tenSpade, tenDiamond, fourSpade, fiveSpade));
 		Card[] tempBoard1 = temp1.toArray(new Card[temp1.size()]);
@@ -416,7 +418,7 @@ public class myTests {
 
 		Card [] tempPlayerCards1 = new Card[2];
 		tempPlayerCards1[0] = sevenClub;
-		tempPlayerCards1[1] = sevenHeart;
+		tempPlayerCards1[1] = sixClub;
 
 		Card [] tempPlayerCards2 = new Card[2];
 		tempPlayerCards2[0] = deuceClub;
@@ -430,17 +432,17 @@ public class myTests {
 		tempPlayerCards4[0] = kingClub;
 		tempPlayerCards4[1] = jackSpade;
 
-		tempPlayers.get(0).receiveHand(tempPlayerCards3);
-		tempPlayers.get(1).receiveHand(tempPlayerCards4);
+		tempPlayers.get(0).receiveHand(tempPlayerCards1);
+		tempPlayers.get(1).receiveHand(tempPlayerCards2);
 //		tempPlayers.get(2).receiveHand(tempPlayerCards3);
 //		tempPlayers.get(3).receiveHand(tempPlayerCards4);
 
-//		HandEvaluator.evaluateHands(tempPlayers, tempBoard);
+		HandEvaluator.evaluateHands(tempPlayers, tempBoard);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard1);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard2);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard3);
 //		HandEvaluator.evaluateHands(tempPlayers, tempBoard4);
-		HandEvaluator.evaluateHands(tempPlayers, tempBoard5);
+//		HandEvaluator.evaluateHands(tempPlayers, tempBoard5);
 
 
 	}

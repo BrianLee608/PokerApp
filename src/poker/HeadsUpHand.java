@@ -97,13 +97,13 @@ public class HeadsUpHand implements Serializable {
         if(streetIn == PRE_FLOP){
             //Post sb and set how much sb has bet
             game.players.get(game.sbIndex).postSB();
-            game.players.get(game.sbIndex).setStreetMoney(PokerGame.SMALL_BLIND);
+            game.players.get(game.sbIndex).setStreetMoney(HeadsUpPokerGame.SMALL_BLIND);
 
             //Post bb and set how much bb has bet
             game.players.get(game.bbIndex).postBB();
-            game.players.get(game.bbIndex).setStreetMoney(PokerGame.BIG_BLIND);
+            game.players.get(game.bbIndex).setStreetMoney(HeadsUpPokerGame.BIG_BLIND);
 
-            this.addToPot(PokerGame.SMALL_BLIND + PokerGame.BIG_BLIND);
+            this.addToPot(HeadsUpPokerGame.SMALL_BLIND + HeadsUpPokerGame.BIG_BLIND);
         }
 
         game.players.get(startingIndex).setEndAction(true);
@@ -165,6 +165,11 @@ public class HeadsUpHand implements Serializable {
                 if (tempActionCounter == game.players.size() - 1) {
                     //If action is on the last player, check if next player (0) is last to act
                     if (game.players.get(0).endAction) {
+                        if(allInCounter == activePlayers.size()-1){
+                            //If everyone but one person is all in, let him act then ++ to allincounter
+                            //Causes if statement at beginning of while loop to skip all later actions
+                            allInCounter++;
+                        }
                         //Break out of while loop
                         return;
                     }
@@ -174,7 +179,6 @@ public class HeadsUpHand implements Serializable {
                     //If action is on the last player, check if next player is last to act
                     if (game.players.get(tempActionCounter + 1).endAction) {
                         if(allInCounter == activePlayers.size()-1){
-                            System.out.println("allin++");
                             //If everyone but one person is all in, let him act then ++ to allincounter
                             //Causes if statement at beginning of while loop to skip all later actions
                             allInCounter++;
@@ -271,7 +275,7 @@ public class HeadsUpHand implements Serializable {
                             winnerMessage = "Split pot";
                         }
                         else{
-                            winnerMessage = game.players.get(l).getPlayerName() + " is the winner";
+                            winnerMessage = game.players.get(l).getPlayerName() + " wins with " + Arrays.toString(game.players.get(l).getHoleCards());
                             System.out.println(winnerMessage);
                         }
                         break;
@@ -284,7 +288,7 @@ public class HeadsUpHand implements Serializable {
         game.players.get(1).spectate(this, game, RIVER, winnerMessage);
         //Pause game for 10000ms (will either move on to next hand or end)
         try{
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         }catch (InterruptedException e){
             e.printStackTrace();
         }
@@ -300,7 +304,7 @@ public class HeadsUpHand implements Serializable {
                 game.players.get(1).endGameMessage();
                 //Pause game for 10000ms
                 try{
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }

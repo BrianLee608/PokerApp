@@ -59,8 +59,6 @@ public class Card implements Comparable<Card>, Serializable {
 		return rank.equals(c.rank) && suit.equals(c.suit);
 		
 	}
-	
-	
 
 
 }

@@ -55,7 +55,6 @@ public class HandEvaluator {
 			playerStrengths[i] = determineStrength(allCardz);
 			}
 
-		//
 		ArrayList <Integer> winnerList = determineWinner(playerStrengths);
 		ArrayList <Integer> idList = new ArrayList<Integer>(winnerList.size());
 
@@ -91,7 +90,6 @@ public class HandEvaluator {
 			playerStrengths[i] = determineStrength(allCardz);
 		}
 
-		//
 		ArrayList <Integer> winnerList = determineWinner(playerStrengths);
 		ArrayList <Integer> idList = new ArrayList<Integer>(winnerList.size());
 
