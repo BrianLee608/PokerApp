@@ -208,6 +208,10 @@ public class HeadsUpHand implements Serializable {
         if(activePlayers.size()!=1){
             startFlop(game);
         }
+        //Output folded message
+        else{
+            foldedMessage(game, PRE_FLOP);
+        }
 
     }
 
@@ -236,6 +240,10 @@ public class HeadsUpHand implements Serializable {
         if(activePlayers.size()!=1){
             startTurn(game);
         }
+        //Output folded message
+        else{
+            foldedMessage(game, FLOP);
+        }
 
     }
 
@@ -245,6 +253,10 @@ public class HeadsUpHand implements Serializable {
         //Only moves to river if there are still people in pot
         if(activePlayers.size()!=1){
             startRiver(game);
+        }
+        //Output folded message
+        else{
+            foldedMessage(game, TURN);
         }
 
     }
@@ -267,7 +279,6 @@ public class HeadsUpHand implements Serializable {
             }
             for(int l = 0; l < game.players.size(); l++){
                 for(int m = 0; m < idList.size(); m++){
-                    System.out.println(idList);
                     //Find winning player (for loop allows for players to be removed)
                     if(game.players.get(l).id == idList.get(m)){
                         game.players.get(l).winPot(pot);
@@ -286,7 +297,7 @@ public class HeadsUpHand implements Serializable {
 
         game.players.get(0).spectate(this, game, RIVER, winnerMessage);
         game.players.get(1).spectate(this, game, RIVER, winnerMessage);
-        //Pause game for 10000ms (will either move on to next hand or end)
+        //Pause game for 5000ms (will either move on to next hand or end)
         try{
             Thread.sleep(5000);
         }catch (InterruptedException e){
@@ -302,7 +313,7 @@ public class HeadsUpHand implements Serializable {
                 //For heads up once a player is removed game is over (or rebuys - requires implementation)
                 game.players.get(0).endGameMessage();
                 game.players.get(1).endGameMessage();
-                //Pause game for 10000ms
+                //Pause game for 5000ms
                 try{
                     Thread.sleep(5000);
                 }catch (InterruptedException e){
@@ -326,6 +337,28 @@ public class HeadsUpHand implements Serializable {
 
     public void increaseAllInCounter(){
         allInCounter++;
+    }
+
+    public void foldedMessage(HeadsUpPokerGame game, int streetIn){
+        int winnerID = activePlayers.get(0).id;
+        int loserID;
+        if(winnerID == 0){
+            loserID = 1;
+        }
+        else{
+            loserID = 0;
+        }
+        String winnerMessage = game.players.get(loserID).getPlayerName() + " folded, "
+                + game.players.get(winnerID).getPlayerName() + " is the winner";
+
+        game.players.get(0).spectate(this, game, streetIn, winnerMessage);
+        game.players.get(1).spectate(this, game, streetIn, winnerMessage);
+        //Pause game for 5000ms
+        try{
+            Thread.sleep(5000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
 }

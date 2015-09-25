@@ -248,7 +248,6 @@ public class HeadsUpPlayer extends Thread implements Serializable{
                     this.fold();
                     isCorrect = true;
                     betSize = 0;
-                    game.players.get(otherPlayerID).addMessage(name + " folded like a nit");
                 }
                 else {
                     addMessage("Incorrect action, please try again");

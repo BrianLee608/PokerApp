@@ -90,6 +90,9 @@ public class HandEvaluator {
 			playerStrengths[i] = determineStrength(allCardz);
 		}
 
+		System.out.println(Arrays.toString(board));
+		System.out.println(Arrays.toString(playerStrengths[0]));
+		System.out.println(Arrays.toString(playerStrengths[1]));
 		ArrayList <Integer> winnerList = determineWinner(playerStrengths);
 		ArrayList <Integer> idList = new ArrayList<Integer>(winnerList.size());
 
